@@ -50,7 +50,7 @@ namespace WGP.AZURUI
         public enum State
         {
             UNCHECKED,
-            INTERMEDIATE,
+            INDETERMINATE,
             CHECKED
         }
 
@@ -112,6 +112,8 @@ namespace WGP.AZURUI
                 else
                     Pressing = false;
             }
+            if (!Hovered)
+                Pressing = false;
             if (oldHover != Hovered || (!oldPress && Pressing))
                 _chronometer.Restart();
 
@@ -166,6 +168,50 @@ namespace WGP.AZURUI
                     _outerLight.Append(new Vertex(new Vector2f(9, 9) + (Angle.Loop * i / 30).GenerateVector(9), new HSVColor(Hue, .75f, 1, A)));
                     _outerLight.Append(new Vertex(new Vector2f(9, 9) + (Angle.Loop * i / 30).GenerateVector(15), new HSVColor(Hue, .75f, 1, 0)));
                 }
+            }
+            if (CurrentState == State.CHECKED)
+            {
+                Vector2f center = new Vector2f(8, 8);
+                _lines.Append(new Vertex(center + new Vector2f(-4, 1), Color.White));
+                _lines.Append(new Vertex(center + new Vector2f(-1, 4), Color.White));
+
+                _lines.Append(new Vertex(center + new Vector2f(-1, 4), Color.White));
+                _lines.Append(new Vertex(center + new Vector2f(5, -2), Color.White));
+
+                //outline
+                _lines.Append(new Vertex(center + new Vector2f(-4, 0), new HSVColor(Hue, .35f, 1)));
+                _lines.Append(new Vertex(center + new Vector2f(-1, 3), new HSVColor(Hue, .35f, 1)));
+
+                _lines.Append(new Vertex(center + new Vector2f(-1, 3), new HSVColor(Hue, .35f, 1)));
+                _lines.Append(new Vertex(center + new Vector2f(5, -3), new HSVColor(Hue, .35f, 1)));
+
+                _lines.Append(new Vertex(center + new Vector2f(5, -3), new HSVColor(Hue, .35f, 1)));
+                _lines.Append(new Vertex(center + new Vector2f(6, -2), new HSVColor(Hue, .35f, 1)));
+
+                _lines.Append(new Vertex(center + new Vector2f(6, -2), new HSVColor(Hue, .35f, 1)));
+                _lines.Append(new Vertex(center + new Vector2f(-1, 5), new HSVColor(Hue, .35f, 1)));
+
+                _lines.Append(new Vertex(center + new Vector2f(-1, 5), new HSVColor(Hue, .35f, 1)));
+                _lines.Append(new Vertex(center + new Vector2f(-5, 1), new HSVColor(Hue, .35f, 1)));
+            }
+            else if (CurrentState == State.INDETERMINATE)
+            {
+                Vector2f center = new Vector2f(8, 8);
+                _lines.Append(new Vertex(center + new Vector2f(-4, 1), Color.White));
+                _lines.Append(new Vertex(center + new Vector2f(7, 1), Color.White));
+
+                //outline
+                _lines.Append(new Vertex(center + new Vector2f(-4, 0), new HSVColor(Hue, .35f, 1)));
+                _lines.Append(new Vertex(center + new Vector2f(6, 0), new HSVColor(Hue, .35f, 1)));
+
+                _lines.Append(new Vertex(center + new Vector2f(6, 0), new HSVColor(Hue, .35f, 1)));
+                _lines.Append(new Vertex(center + new Vector2f(7, 1), new HSVColor(Hue, .35f, 1)));
+
+                _lines.Append(new Vertex(center + new Vector2f(6, 2), new HSVColor(Hue, .35f, 1)));
+                _lines.Append(new Vertex(center + new Vector2f(-4, 2), new HSVColor(Hue, .35f, 1)));
+
+                _lines.Append(new Vertex(center + new Vector2f(-5, 1), new HSVColor(Hue, .35f, 1)));
+                _lines.Append(new Vertex(center + new Vector2f(-4, 0), new HSVColor(Hue, .35f, 1)));
             }
         }
 
