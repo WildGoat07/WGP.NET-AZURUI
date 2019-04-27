@@ -103,9 +103,9 @@ namespace WGP.AzurUI
             if (Pressing)
             {
                 _gradient.Append(new Vertex(new Vector2f(-HalfSize.X + 1, -HalfSize.Y + 1), new HSVColor(Hue, s / 2, .47f,
-                    (byte)Utilities.Interpolation(Utilities.Percent(_chronometer.ElapsedTime, Time.Zero, Time.FromMilliseconds(1000)), 0f, 255))));
+                    (byte)Utilities.Interpolation(Utilities.Percent(_chronometer.ElapsedTime, Time.Zero, Time.FromMilliseconds(1000)), 60f, 255))));
                 _gradient.Append(new Vertex(new Vector2f(HalfSize.X - 2, -HalfSize.Y + 1), new HSVColor(Hue, s / 2, .47f,
-                    (byte)Utilities.Interpolation(Utilities.Percent(_chronometer.ElapsedTime, Time.Zero, Time.FromMilliseconds(1000)), 0f, 255))));
+                    (byte)Utilities.Interpolation(Utilities.Percent(_chronometer.ElapsedTime, Time.Zero, Time.FromMilliseconds(1000)), 60f, 255))));
             }
             else if (Hovered)
             {
