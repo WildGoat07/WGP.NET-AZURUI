@@ -127,7 +127,7 @@ namespace WGP.AZURUI
             if (Hovered)
                 outlineColor.V = Utilities.Interpolation(Utilities.Percent(_chronometer.ElapsedTime, Time.Zero, Time.FromSeconds(.5f)), .6f, .8f);
             if (Pressing)
-                outlineColor.V = Utilities.Interpolation(Utilities.Percent(_chronometer.ElapsedTime, Time.Zero, Time.FromSeconds(1.5f)), .8f, 1f);
+                outlineColor.V = Utilities.Interpolation(Utilities.Percent(_chronometer.ElapsedTime, Time.Zero, Time.FromSeconds(1f)), .8f, 1f);
             for (int i = 0; i < 30; i++)
             {
                 _lines.Append(new Vertex((Angle.Loop * i / 30).GenerateVector(9) + new Vector2f(9, 9), outlineColor));
@@ -139,21 +139,21 @@ namespace WGP.AZURUI
                 byte bonusA;
                 if (Pressing)
                 {
-                    bonusA = (byte)(.4f * 255);
+                    bonusA = (byte)Utilities.Interpolation(Utilities.Percent(_chronometer.ElapsedTime, Time.Zero, Time.FromSeconds(.5f)), .3f * 255, .4f * 255);
                     S = .75f;
-                    bonusV = Utilities.Interpolation(Utilities.Percent(_chronometer.ElapsedTime, Time.Zero, Time.FromSeconds(1.5f)), .25f, .5f);
+                    bonusV = Utilities.Interpolation(Utilities.Percent(_chronometer.ElapsedTime, Time.Zero, Time.FromSeconds(1f)), .35f, .5f);
                 }
                 else if (Hovered)
                 {
-                    bonusA = (byte)Utilities.Interpolation(Utilities.Percent(_chronometer.ElapsedTime, Time.Zero, Time.FromSeconds(.5f)), 0f, .2f * 255);
-                    S = Utilities.Interpolation(Utilities.Percent(_chronometer.ElapsedTime, Time.Zero, Time.FromSeconds(.5f)), .36f, .65f);
-                    bonusV = Utilities.Interpolation(Utilities.Percent(_chronometer.ElapsedTime, Time.Zero, Time.FromSeconds(.5f)), 0f, .25f);
+                    bonusA = (byte)Utilities.Interpolation(Utilities.Percent(_chronometer.ElapsedTime, Time.Zero, Time.FromSeconds(.5f)), .1f * 255, .2f * 255);
+                    S = Utilities.Interpolation(Utilities.Percent(_chronometer.ElapsedTime, Time.Zero, Time.FromSeconds(.5f)), .5f, .75f);
+                    bonusV = Utilities.Interpolation(Utilities.Percent(_chronometer.ElapsedTime, Time.Zero, Time.FromSeconds(.5f)), .2f, .35f);
                 }
                 else
                 {
-                    bonusV = 0;
-                    bonusA = 0;
-                    S = .36f;
+                    bonusV = .2f;
+                    bonusA = (byte)(.1f * 255);
+                    S = .5f;
                 }
                 _gradient.Append(new Vertex(new Vector2f(9, 9), new HSVColor(Hue, S, .5f + bonusV, bonusA)));
                 for (int i = 0; i <= 30; i++)
@@ -162,7 +162,7 @@ namespace WGP.AZURUI
             {
                 byte A = 0;
                 if (Pressing)
-                    A = (byte)Utilities.Interpolation(Utilities.Percent(_chronometer.ElapsedTime, Time.Zero, Time.FromSeconds(1.5f)), 0f, 255f);
+                    A = (byte)Utilities.Interpolation(Utilities.Percent(_chronometer.ElapsedTime, Time.Zero, Time.FromSeconds(1f)), 0f, 255f);
                 for (int i = 0; i <= 30; i++)
                 {
                     _outerLight.Append(new Vertex(new Vector2f(9, 9) + (Angle.Loop * i / 30).GenerateVector(9), new HSVColor(Hue, .75f, 1, A)));

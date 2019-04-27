@@ -103,9 +103,9 @@ namespace WGP.AZURUI
             if (Pressing)
             {
                 _gradient.Append(new Vertex(new Vector2f(-HalfSize.X + 1, -HalfSize.Y + 1), new HSVColor(Hue, s / 2, .47f,
-                    (byte)Utilities.Interpolation(Utilities.Percent(_chronometer.ElapsedTime, Time.Zero, Time.FromMilliseconds(1500)), 0f, 255))));
+                    (byte)Utilities.Interpolation(Utilities.Percent(_chronometer.ElapsedTime, Time.Zero, Time.FromMilliseconds(1000)), 0f, 255))));
                 _gradient.Append(new Vertex(new Vector2f(HalfSize.X - 2, -HalfSize.Y + 1), new HSVColor(Hue, s / 2, .47f,
-                    (byte)Utilities.Interpolation(Utilities.Percent(_chronometer.ElapsedTime, Time.Zero, Time.FromMilliseconds(1500)), 0f, 255))));
+                    (byte)Utilities.Interpolation(Utilities.Percent(_chronometer.ElapsedTime, Time.Zero, Time.FromMilliseconds(1000)), 0f, 255))));
             }
             else if (Hovered)
             {
@@ -126,7 +126,7 @@ namespace WGP.AZURUI
             var actualBonus = bonusV * 1.2f;
             var bonus0 = 0;
             Time threshold = Time.Zero;
-            Time increase = Time.FromSeconds(1.5f) / 9f;
+            Time increase = Time.FromSeconds(1f) / 9f;
 
             #region light
 
