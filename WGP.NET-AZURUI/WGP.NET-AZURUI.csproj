@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>WGP.AZURUI</RootNamespace>
-    <AssemblyName>WGP.NET-AZURUI</AssemblyName>
+    <AssemblyName>WGP.NET-AzurUI</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -47,7 +47,7 @@
     <PlatformTarget>x64</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <DocumentationFile>bin\x64\Release\WGP.NET-AZURUI.xml</DocumentationFile>
+    <DocumentationFile>bin\x64\Release\WGP.NET-AzurUI.xml</DocumentationFile>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <ItemGroup>
