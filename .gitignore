@@ -1,0 +1,9 @@
+*.dll
+*.exe
+*.xml
+*.pdb
+*.config
+*.xml
+obj
+packages
+.vs
