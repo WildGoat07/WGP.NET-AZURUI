@@ -7,7 +7,7 @@ using WGP;
 using SFML.System;
 using SFML.Graphics;
 
-namespace WGP.AZURUI
+namespace WGP.AzurUI
 {
     public static class Engine
     {

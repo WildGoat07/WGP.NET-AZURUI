@@ -8,7 +8,7 @@ using SFML.System;
 using SFML.Graphics;
 using SFML.Window;
 
-namespace WGP.AZURUI
+namespace WGP.AzurUI
 {
     public class Checkbox : Widget
     {
