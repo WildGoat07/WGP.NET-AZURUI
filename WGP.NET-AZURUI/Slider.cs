@@ -44,7 +44,6 @@ namespace WGP.AzurUI
         /// Texture of the pad.
         /// </summary>
         protected RenderTexture PadRenderer;
-        protected bool requireUpdate;
 
         /// <summary>
         /// List of the displayed texts.
@@ -68,6 +67,7 @@ namespace WGP.AzurUI
         private float _value1;
         private float _value2;
         private bool oldMouseState;
+        private bool requireUpdate;
 
         #endregion Private Fields
 
@@ -727,9 +727,9 @@ namespace WGP.AzurUI
 
         #endregion Public Methods
 
-        #region Protected Methods
+        #region Private Methods
 
-        protected void UpdateTexts()
+        private void UpdateTexts()
         {
             requireUpdate = false;
             Texts.Clear();
@@ -841,6 +841,6 @@ namespace WGP.AzurUI
             }
         }
 
-        #endregion Protected Methods
+        #endregion Private Methods
     }
 }
