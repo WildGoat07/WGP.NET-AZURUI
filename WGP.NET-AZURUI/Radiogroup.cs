@@ -87,6 +87,15 @@ namespace WGP.AzurUI
         /// </summary>
         public Collection<object> Items => _items;
         public override FloatRect LocalBounds => throw new NotImplementedException();
+
+        /// <summary>
+        /// The AABB of the widget without its position.
+        /// </summary>
+        public override FloatRect LocalBounds => new FloatRect(0, 0, Utilities.Max(_texts.ConvertAll((t) => t.GetGlobalBounds().Width)) + 10, Items.Count * Engine.CharacterSize);
+
+        /// <summary>
+        /// Index of the item on which the mouse is clicking. -1 if no item is being clicked.
+        /// </summary>
         public int PressingOn { get; protected set; }
 
         /// <summary>
