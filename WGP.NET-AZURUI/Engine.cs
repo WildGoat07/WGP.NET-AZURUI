@@ -14,11 +14,24 @@ namespace WGP.AzurUI
         #region Internal Fields
 
         internal static Font BaseFont;
+
         internal static Color BaseFontColor;
+
         internal static uint CharacterSize;
+
         internal static Chronometer Chronometer;
 
         #endregion Internal Fields
+
+        #region Public Enums
+
+        public enum Orientation
+        {
+            HORIZONTAL,
+            VERTICAL
+        }
+
+        #endregion Public Enums
 
         #region Public Properties
 

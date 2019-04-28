@@ -83,6 +83,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Radiogroup.cs" />
+    <Compile Include="Slider.cs" />
     <Compile Include="Widget.cs" />
   </ItemGroup>
   <ItemGroup>
