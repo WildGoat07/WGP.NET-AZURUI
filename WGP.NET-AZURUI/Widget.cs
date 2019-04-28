@@ -18,6 +18,7 @@ namespace WGP.AzurUI
         {
             _chronometer = new Chronometer(Engine.Chronometer);
             Position = new Vector2f();
+            Hue = Engine.DefaultHue;
         }
 
         #endregion Public Constructors
@@ -25,6 +26,7 @@ namespace WGP.AzurUI
         #region Public Properties
 
         public FloatRect GlobalBounds => new FloatRect(LocalBounds.TopLeft() + Position, LocalBounds.Size());
+        public float Hue { get; set; }
         public abstract FloatRect LocalBounds { get; }
         public Vector2f Position { get; set; }
 

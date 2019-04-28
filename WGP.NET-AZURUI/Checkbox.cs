@@ -37,7 +37,6 @@ namespace WGP.AzurUI
             _lines = new VertexArray(PrimitiveType.Lines);
             _text = new Text("", Engine.BaseFont, Engine.CharacterSize);
             _text.FillColor = Engine.BaseFontColor;
-            Hue = Engine.DefaultHue;
             Pressing = false;
             Hovered = false;
             oldMouseState = false;
@@ -77,7 +76,6 @@ namespace WGP.AzurUI
         }
 
         public bool Hovered { get; protected set; }
-        public float Hue { get; set; }
         public override FloatRect LocalBounds => new FloatRect(0, 0, 20 + _text.GetGlobalBounds().Width, 18);
         public bool Pressing { get; protected set; }
         public Action StateChanged { get; set; }
