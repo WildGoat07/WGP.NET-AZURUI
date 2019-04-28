@@ -10,12 +10,26 @@ using SFML.Window;
 
 namespace WGP.AzurUI
 {
+    /// <summary>
+    /// A simple clickable button.
+    /// </summary>
     public class Button : Widget
     {
         #region Protected Fields
 
+        /// <summary>
+        /// The vertice used for the gradient.
+        /// </summary>
         protected VertexArray _gradient;
+
+        /// <summary>
+        /// The vertice used for the lines.
+        /// </summary>
         protected VertexArray _lines;
+
+        /// <summary>
+        /// The text displayed.
+        /// </summary>
         protected Text _text;
 
         #endregion Protected Fields
@@ -28,6 +42,9 @@ namespace WGP.AzurUI
 
         #region Public Constructors
 
+        /// <summary>
+        /// Constructor.
+        /// </summary>
         public Button() : base()
         {
             _text = new Text("", Engine.BaseFont, Engine.CharacterSize);
@@ -44,17 +61,45 @@ namespace WGP.AzurUI
 
         #region Public Properties
 
+        /// <summary>
+        /// Triggered when clicking the button.
+        /// </summary>
         public Action Clicked { get; set; }
+
+        /// <summary>
+        /// Size of the button. The origin is in the middle.
+        /// </summary>
         public Vector2f HalfSize { get; set; }
+
+        /// <summary>
+        /// True if the mouse hovers the button.
+        /// </summary>
         public bool Hovered { get; protected set; }
+
+        /// <summary>
+        /// The AABB of the widget without its position.
+        /// </summary>
         public override FloatRect LocalBounds => new FloatRect(-HalfSize, HalfSize * 2);
+
+        /// <summary>
+        /// True when the mouse is clicking the button.
+        /// </summary>
         public bool Pressing { get; protected set; }
+
+        /// <summary>
+        /// The text of the button.
+        /// </summary>
         public string Text { get; set; }
 
         #endregion Public Properties
 
         #region Public Methods
 
+        /// <summary>
+        /// Draws the widget on the target.
+        /// </summary>
+        /// The widget should be moved according to its Position when inherited.
+        /// <param name="target">Target to draw the widget on.</param>
         public override void DrawOn(RenderTarget target)
         {
             Transform tr = Transform.Identity;
@@ -64,6 +109,10 @@ namespace WGP.AzurUI
             target.Draw(_text, new RenderStates(tr));
         }
 
+        /// <summary>
+        /// Updates the widget (graphics and events).
+        /// </summary>
+        /// <param name="app">Windows on which the widget is DIRECTLY drawn on.</param>
         public override void Update(RenderWindow app)
         {
             bool oldHover = Hovered;
@@ -83,6 +132,11 @@ namespace WGP.AzurUI
                 _chronometer.Restart();
             float s = .3f;
             float bonusV = 0;
+            if (!Enabled)
+            {
+                Hovered = false;
+                Pressing = false;
+            }
             if (Hovered)
             {
                 s = Utilities.Interpolation(Utilities.Percent(_chronometer.ElapsedTime, Time.Zero, Time.FromMilliseconds(500)), .3f, .5f);

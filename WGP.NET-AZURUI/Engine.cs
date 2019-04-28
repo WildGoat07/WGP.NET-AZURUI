@@ -9,6 +9,9 @@ using SFML.Graphics;
 
 namespace WGP.AzurUI
 {
+    /// <summary>
+    /// Main class to initialize the widgets.
+    /// </summary>
     public static class Engine
     {
         #region Internal Fields
@@ -25,9 +28,19 @@ namespace WGP.AzurUI
 
         #region Public Enums
 
+        /// <summary>
+        /// The orientation of some widgets.
+        /// </summary>
         public enum Orientation
         {
+            /// <summary>
+            /// The widget is horizontally displayed.
+            /// </summary>
             HORIZONTAL,
+
+            /// <summary>
+            /// The widget is vertically displayed.
+            /// </summary>
             VERTICAL
         }
 
@@ -35,13 +48,23 @@ namespace WGP.AzurUI
 
         #region Public Properties
 
+        /// <summary>
+        /// The default recommended background color.
+        /// </summary>
         public static Color DefaultBackgroundColor => new HSVColor(DefaultHue, .26f, .37f);
+
+        /// <summary>
+        /// The default hue of newly created widgets.
+        /// </summary>
         public static float DefaultHue => 220;
 
         #endregion Public Properties
 
         #region Public Methods
 
+        /// <summary>
+        /// Initialize the engine. Must be called before creating any widget to not cause troubles.
+        /// </summary>
         public static void Initialize()
         {
             BaseFont = new Font(Properties.Resources.tahoma);

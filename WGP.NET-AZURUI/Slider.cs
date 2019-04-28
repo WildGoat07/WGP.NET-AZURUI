@@ -10,15 +10,50 @@ namespace WGP.AzurUI
     {
         #region Protected Fields
 
+        /// <summary>
+        /// Vertice of the downside part of the pad.
+        /// </summary>
         protected VertexArray DownPadVertice;
+
+        /// <summary>
+        /// Vertice used by the light of the pad 1.
+        /// </summary>
         protected VertexArray Light1;
+
+        /// <summary>
+        /// Vertice used by the light of the pad 2.
+        /// </summary>
         protected VertexArray Light2;
+
+        /// <summary>
+        /// Vertice used by the lines.
+        /// </summary>
         protected VertexArray Lines;
+
+        /// <summary>
+        /// Shape of the pad 1.
+        /// </summary>
         protected CircleShape Pad1;
+
+        /// <summary>
+        /// Shape of the pad 2.
+        /// </summary>
         protected CircleShape Pad2;
+
+        /// <summary>
+        /// Texture of the pad.
+        /// </summary>
         protected RenderTexture PadRenderer;
         protected bool requireUpdate;
+
+        /// <summary>
+        /// List of the displayed texts.
+        /// </summary>
         protected List<Text> Texts;
+
+        /// <summary>
+        /// Vertice of the upside part of the pad.
+        /// </summary>
         protected VertexArray UpPadVertice;
 
         #endregion Protected Fields
@@ -38,6 +73,9 @@ namespace WGP.AzurUI
 
         #region Public Constructors
 
+        /// <summary>
+        /// Constructor.
+        /// </summary>
         public Slider() : base()
         {
             ValueChanged = null;
@@ -66,15 +104,45 @@ namespace WGP.AzurUI
 
         #region Public Enums
 
+        /// <summary>
+        /// How the side ticks of the slider will be displayed.
+        /// </summary>
         [Flags]
         public enum TickType
         {
+            /// <summary>
+            /// Nothing is diplayed.
+            /// </summary>
             NONE = 0,
+
+            /// <summary>
+            /// The top is displayed if horizontally drawn, left is displayed if vertically drawn.
+            /// </summary>
             TOP_LEFT = 1,
+
+            /// <summary>
+            /// The bot is displayed if horizontally drawn, right is displayed if vertically drawn.
+            /// </summary>
             BOT_RIGHT = 2,
+
+            /// <summary>
+            /// The numbers will be displayed every division.
+            /// </summary>
             SHOW_TEXT = 4,
+
+            /// <summary>
+            /// Both sides of the slider will be ticked.
+            /// </summary>
             BOTH_WITHOUT_TEXT = TOP_LEFT | BOT_RIGHT,
+
+            /// <summary>
+            /// Both sides of the slider will be ticked and numbered.
+            /// </summary>
             ALL = SHOW_TEXT | BOTH_WITHOUT_TEXT,
+
+            /// <summary>
+            /// Only top/left will be ticked and numbered by default.
+            /// </summary>
             DEFAULT = TOP_LEFT | SHOW_TEXT
         }
 
@@ -82,6 +150,9 @@ namespace WGP.AzurUI
 
         #region Public Properties
 
+        /// <summary>
+        /// Number of divisions between the min and max values.
+        /// </summary>
         public int Divisions
         {
             get => _divisions;
@@ -95,9 +166,19 @@ namespace WGP.AzurUI
             }
         }
 
+        /// <summary>
+        /// True if the slider has two pads for range picking.
+        /// </summary>
         public bool DoublePad { get; set; }
+
+        /// <summary>
+        /// True if the mouse hovers the widget.
+        /// </summary>
         public bool Hovered { get; protected set; }
 
+        /// <summary>
+        /// The AABB of the widget without its position.
+        /// </summary>
         public override FloatRect LocalBounds
         {
             get
@@ -139,6 +220,9 @@ namespace WGP.AzurUI
             }
         }
 
+        /// <summary>
+        /// Maximum value of the slider.
+        /// </summary>
         public float Maximum
         {
             get => _maximum;
@@ -154,6 +238,9 @@ namespace WGP.AzurUI
             }
         }
 
+        /// <summary>
+        /// Minimum value of the slider.
+        /// </summary>
         public float Minimum
         {
             get => _minimum;
@@ -169,10 +256,24 @@ namespace WGP.AzurUI
             }
         }
 
+        /// <summary>
+        /// The number formatting when calling Single.ToString(format)
+        /// </summary>
         public string NumberFormat { get; set; }
+
+        /// <summary>
+        /// The orientation of the slider.
+        /// </summary>
         public Engine.Orientation Orientation { get; set; }
+
+        /// <summary>
+        /// index of the pad being clicked (1 for the pad 1, 2 for the pad 2). 0 if nothing is being clicked.
+        /// </summary>
         public int Pressing { get; protected set; }
 
+        /// <summary>
+        /// Range value of the double pad slider.
+        /// </summary>
         public Tuple<float, float> Range
         {
             get => Tuple.Create(Utilities.Min(_value1, _value2), Utilities.Max(_value1, _value2));
@@ -183,9 +284,19 @@ namespace WGP.AzurUI
             }
         }
 
+        /// <summary>
+        /// Length of the slider in pixels.
+        /// </summary>
         public float Size { get; set; }
+
+        /// <summary>
+        /// Step of the changed value when the user changes the value.
+        /// </summary>
         public float Step { get; set; }
 
+        /// <summary>
+        /// Number of subdivisions between each division.
+        /// </summary>
         public int SubDivisions
         {
             get => _subDivision;
@@ -199,6 +310,9 @@ namespace WGP.AzurUI
             }
         }
 
+        /// <summary>
+        /// Configuration of the way the ticks are displayed.
+        /// </summary>
         public TickType TickConfig
         {
             get => _tickConfig;
@@ -212,13 +326,25 @@ namespace WGP.AzurUI
             }
         }
 
+        /// <summary>
+        /// The value of the single pad slider.
+        /// </summary>
         public float Value { get => _value1; set => _value1 = value.Capped(Minimum, Maximum); }
+
+        /// <summary>
+        /// Triggered when the value/range is changed.
+        /// </summary>
         public Action ValueChanged { get; set; }
 
         #endregion Public Properties
 
         #region Public Methods
 
+        /// <summary>
+        /// Draws the widget on the target.
+        /// </summary>
+        /// The widget should be moved according to its Position when inherited.
+        /// <param name="target">Target to draw the widget on.</param>
         public override void DrawOn(RenderTarget target)
         {
             PadRenderer.Clear(new HSVColor(Hue, .2f, 1));
@@ -237,6 +363,10 @@ namespace WGP.AzurUI
                 target.Draw(item, new RenderStates(tr));
         }
 
+        /// <summary>
+        /// Updates the widget (graphics and events).
+        /// </summary>
+        /// <param name="app">Windows on which the widget is DIRECTLY drawn on.</param>
         public override void Update(RenderWindow app)
         {
             if (requireUpdate)

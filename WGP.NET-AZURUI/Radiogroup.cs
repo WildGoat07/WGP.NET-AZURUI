@@ -10,14 +10,36 @@ using SFML.Window;
 
 namespace WGP.AzurUI
 {
+    /// <summary>
+    /// List of checkboxes with only one choice.
+    /// </summary>
     public class Radiogroup : Widget
     {
         #region Protected Fields
 
+        /// <summary>
+        /// Vertice used for the gradient.
+        /// </summary>
         protected VertexArray _gradient;
+
+        /// <summary>
+        /// Internal list of the items.
+        /// </summary>
         protected ObservableCollection<object> _items;
+
+        /// <summary>
+        /// Vertice used for the lines.
+        /// </summary>
         protected VertexArray _lines;
+
+        /// <summary>
+        /// List of the texts to display.
+        /// </summary>
         protected List<Text> _texts;
+
+        /// <summary>
+        /// Chronometer for the pad moving animation.
+        /// </summary>
         protected Chronometer PadChrono;
 
         #endregion Protected Fields
@@ -34,6 +56,9 @@ namespace WGP.AzurUI
 
         #region Public Constructors
 
+        /// <summary>
+        /// Constructor.
+        /// </summary>
         public Radiogroup() : base()
         {
             PadChrono = new Chronometer(Engine.Chronometer);
@@ -52,11 +77,21 @@ namespace WGP.AzurUI
 
         #region Public Properties
 
+        /// <summary>
+        /// Index of the item hovered by the mouse. -1 if no item is hovered.
+        /// </summary>
         public int HoveredOn { get; protected set; }
+
+        /// <summary>
+        /// Items of the radiogroup.
+        /// </summary>
         public Collection<object> Items => _items;
         public override FloatRect LocalBounds => throw new NotImplementedException();
         public int PressingOn { get; protected set; }
 
+        /// <summary>
+        /// The index of the selected item.
+        /// </summary>
         public int SelectedIndex
         {
             get => _selectedIndex;
@@ -74,6 +109,9 @@ namespace WGP.AzurUI
             }
         }
 
+        /// <summary>
+        /// The currently selected item.
+        /// </summary>
         public object SelectedItem
         {
             get => Items[SelectedIndex];
@@ -85,12 +123,20 @@ namespace WGP.AzurUI
             }
         }
 
+        /// <summary>
+        /// Triggered when the selection has changed.
+        /// </summary>
         public Action SelectionChanged { get; set; }
 
         #endregion Public Properties
 
         #region Public Methods
 
+        /// <summary>
+        /// Draws the widget on the target.
+        /// </summary>
+        /// The widget should be moved according to its Position when inherited.
+        /// <param name="target">Target to draw the widget on.</param>
         public override void DrawOn(RenderTarget target)
         {
             Transform tr = Transform.Identity;
@@ -101,6 +147,10 @@ namespace WGP.AzurUI
                 target.Draw(text, new RenderStates(tr));
         }
 
+        /// <summary>
+        /// Updates the widget (graphics and events).
+        /// </summary>
+        /// <param name="app">Windows on which the widget is DIRECTLY drawn on.</param>
         public override void Update(RenderWindow app)
         {
             if (requireUpdate)
@@ -135,6 +185,11 @@ namespace WGP.AzurUI
             if (((HoveredOn == -1 && oldHover != -1) || (HoveredOn != -1 && oldHover == -1)) || (oldPress != PressingOn && PressingOn != -1))
                 _chronometer.Restart();
             oldMouseState = Mouse.IsButtonPressed(Mouse.Button.Left);
+            if (!Enabled)
+            {
+                HoveredOn = -1;
+                PressingOn = -1;
+            }
             if (Items.Count > 0)
             {
                 currPadPos = (int)Utilities.Interpolation(Utilities.Percent(PadChrono.ElapsedTime, Time.Zero, Time.FromSeconds(.5f)), oldPadPos, (SelectedIndex * Engine.CharacterSize));

@@ -10,13 +10,31 @@ using SFML.Window;
 
 namespace WGP.AzurUI
 {
+    /// <summary>
+    /// Checkbox widget.
+    /// </summary>
     public class Checkbox : Widget
     {
         #region Protected Fields
 
+        /// <summary>
+        /// The vertice used for the gradient.
+        /// </summary>
         protected VertexArray _gradient;
+
+        /// <summary>
+        /// The vertice used for the lines.
+        /// </summary>
         protected VertexArray _lines;
+
+        /// <summary>
+        /// The vertice used for the light emitted.
+        /// </summary>
         protected VertexArray _outerLight;
+
+        /// <summary>
+        /// The text displayed.
+        /// </summary>
         protected Text _text;
 
         #endregion Protected Fields
@@ -30,6 +48,9 @@ namespace WGP.AzurUI
 
         #region Public Constructors
 
+        /// <summary>
+        /// Constructor.
+        /// </summary>
         public Checkbox() : base()
         {
             _gradient = new VertexArray(PrimitiveType.TriangleFan);
@@ -46,10 +67,24 @@ namespace WGP.AzurUI
 
         #region Public Enums
 
+        /// <summary>
+        /// State of a checkbox.
+        /// </summary>
         public enum State
         {
+            /// <summary>
+            /// The box is unchecked.
+            /// </summary>
             UNCHECKED,
+
+            /// <summary>
+            /// The box is neither checked/unchecked.
+            /// </summary>
             INDETERMINATE,
+
+            /// <summary>
+            /// The box is checked.
+            /// </summary>
             CHECKED
         }
 
@@ -57,12 +92,18 @@ namespace WGP.AzurUI
 
         #region Public Properties
 
+        /// <summary>
+        /// True if the box is checked or indeterminate.
+        /// </summary>
         public bool Checked
         {
             get => CurrentState != State.UNCHECKED;
             set => CurrentState = value ? State.CHECKED : State.UNCHECKED;
         }
 
+        /// <summary>
+        /// Current check state of the checkbox.
+        /// </summary>
         public State CurrentState
         {
             get => _currentState;
@@ -75,16 +116,40 @@ namespace WGP.AzurUI
             }
         }
 
+        /// <summary>
+        /// True if the mouse hovers the checkbox.
+        /// </summary>
         public bool Hovered { get; protected set; }
+
+        /// <summary>
+        /// The AABB of the widget without its position.
+        /// </summary>
         public override FloatRect LocalBounds => new FloatRect(0, 0, 20 + _text.GetGlobalBounds().Width, 18);
+
+        /// <summary>
+        /// True if the mouse is clicking the checkbox.
+        /// </summary>
         public bool Pressing { get; protected set; }
+
+        /// <summary>
+        /// Triggered when the checkbox changed its state.
+        /// </summary>
         public Action StateChanged { get; set; }
+
+        /// <summary>
+        /// Text of the checkbox.
+        /// </summary>
         public string Text { get; set; }
 
         #endregion Public Properties
 
         #region Public Methods
 
+        /// <summary>
+        /// Draws the widget on the target.
+        /// </summary>
+        /// The widget should be moved according to its Position when inherited.
+        /// <param name="target">Target to draw the widget on.</param>
         public override void DrawOn(RenderTarget target)
         {
             Transform tr = Transform.Identity;
@@ -95,6 +160,10 @@ namespace WGP.AzurUI
             target.Draw(_text, new RenderStates(tr));
         }
 
+        /// <summary>
+        /// Updates the widget (graphics and events).
+        /// </summary>
+        /// <param name="app">Windows on which the widget is DIRECTLY drawn on.</param>
         public override void Update(RenderWindow app)
         {
             bool oldHover = Hovered;
@@ -114,6 +183,11 @@ namespace WGP.AzurUI
                 Pressing = false;
             if (oldHover != Hovered || (!oldPress && Pressing))
                 _chronometer.Restart();
+            if (!Enabled)
+            {
+                Hovered = false;
+                Pressing = false;
+            }
 
             _text.DisplayedString = Text;
             _text.Origin = (Vector2f)new Vector2i(0, (int)_text.GetLocalBounds().Top);
@@ -199,7 +273,6 @@ namespace WGP.AzurUI
                 _lines.Append(new Vertex(center + new Vector2f(7, 1), Color.White));
 
                 //outline
-                _lines.Append(new Vertex(center + new Vector2f(-4, 0), new HSVColor(Hue, .35f, 1)));
                 _lines.Append(new Vertex(center + new Vector2f(6, 0), new HSVColor(Hue, .35f, 1)));
 
                 _lines.Append(new Vertex(center + new Vector2f(6, 0), new HSVColor(Hue, .35f, 1)));
