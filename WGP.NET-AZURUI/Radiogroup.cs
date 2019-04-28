@@ -123,7 +123,6 @@ namespace WGP.AzurUI
                 {
                     if (PressingOn == i && oldMouseState)
                     {
-                        PadChrono.Restart();
                         SelectedIndex = i;
                         PressingOn = -1;
                     }
