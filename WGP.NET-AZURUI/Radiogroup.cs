@@ -86,7 +86,6 @@ namespace WGP.AzurUI
         /// Items of the radiogroup.
         /// </summary>
         public Collection<object> Items => _items;
-        public override FloatRect LocalBounds => throw new NotImplementedException();
 
         /// <summary>
         /// The AABB of the widget without its position.
@@ -202,17 +201,17 @@ namespace WGP.AzurUI
             if (Items.Count > 0)
             {
                 currPadPos = (int)Utilities.Interpolation(Utilities.Percent(PadChrono.ElapsedTime, Time.Zero, Time.FromSeconds(.5f)), oldPadPos, (SelectedIndex * Engine.CharacterSize));
-                _lines.Append(new Vertex(new Vector2f(0, 0), new HSVColor(Hue, .3f, .5f)));
-                _lines.Append(new Vertex(new Vector2f(6, 0), new HSVColor(Hue, .3f, .5f)));
+                _lines.Append(new Vertex(new Vector2f(0, 0), NewColor(Hue, .3f, .5f)));
+                _lines.Append(new Vertex(new Vector2f(6, 0), NewColor(Hue, .3f, .5f)));
 
-                _lines.Append(new Vertex(new Vector2f(7, 0), new HSVColor(Hue, .3f, .5f)));
-                _lines.Append(new Vertex(new Vector2f(7, Engine.CharacterSize * Items.Count), new HSVColor(Hue, .3f, .5f)));
+                _lines.Append(new Vertex(new Vector2f(7, 0), NewColor(Hue, .3f, .5f)));
+                _lines.Append(new Vertex(new Vector2f(7, Engine.CharacterSize * Items.Count), NewColor(Hue, .3f, .5f)));
 
-                _lines.Append(new Vertex(new Vector2f(6, Engine.CharacterSize * Items.Count + 1), new HSVColor(Hue, .3f, .5f)));
-                _lines.Append(new Vertex(new Vector2f(0, Engine.CharacterSize * Items.Count + 1), new HSVColor(Hue, .3f, .5f)));
+                _lines.Append(new Vertex(new Vector2f(6, Engine.CharacterSize * Items.Count + 1), NewColor(Hue, .3f, .5f)));
+                _lines.Append(new Vertex(new Vector2f(0, Engine.CharacterSize * Items.Count + 1), NewColor(Hue, .3f, .5f)));
 
-                _lines.Append(new Vertex(new Vector2f(0, Engine.CharacterSize * Items.Count), new HSVColor(Hue, .3f, .5f)));
-                _lines.Append(new Vertex(new Vector2f(0, 0), new HSVColor(Hue, .3f, .5f)));
+                _lines.Append(new Vertex(new Vector2f(0, Engine.CharacterSize * Items.Count), NewColor(Hue, .3f, .5f)));
+                _lines.Append(new Vertex(new Vector2f(0, 0), NewColor(Hue, .3f, .5f)));
 
                 if (HoveredOn != -1)
                 {
@@ -228,45 +227,49 @@ namespace WGP.AzurUI
                         A = (byte)Utilities.Interpolation(Utilities.Percent(_chronometer.ElapsedTime, Time.Zero, Time.FromSeconds(.5f)), 0f, 64);
                         S = Utilities.Interpolation(Utilities.Percent(_chronometer.ElapsedTime, Time.Zero, Time.FromSeconds(.5f)), 0, .5f);
                     }
-                    _gradient.Append(new Vertex(new Vector2f(0, 0), new HSVColor(Hue, S, .75f, A)));
-                    _gradient.Append(new Vertex(new Vector2f(6, 0), new HSVColor(Hue, S, .75f, A)));
-                    _gradient.Append(new Vertex(new Vector2f(6, Engine.CharacterSize * Items.Count), new HSVColor(Hue, S, .75f, A)));
-                    _gradient.Append(new Vertex(new Vector2f(0, Engine.CharacterSize * Items.Count), new HSVColor(Hue, S, .75f, A)));
+                    _gradient.Append(new Vertex(new Vector2f(0, 0), NewColor(Hue, S, .75f, A)));
+                    _gradient.Append(new Vertex(new Vector2f(6, 0), NewColor(Hue, S, .75f, A)));
+                    _gradient.Append(new Vertex(new Vector2f(6, Engine.CharacterSize * Items.Count), NewColor(Hue, S, .75f, A)));
+                    _gradient.Append(new Vertex(new Vector2f(0, Engine.CharacterSize * Items.Count), NewColor(Hue, S, .75f, A)));
+                    S = Utilities.Min(S, .5f);
+                    _gradient.Append(new Vertex(new Vector2f(10, Engine.CharacterSize * HoveredOn), NewColor(Hue, S + .25f, .75f, (byte)Utilities.Min(255, A * 4))));
+                    _gradient.Append(new Vertex(new Vector2f(10 + _texts[HoveredOn].GetGlobalBounds().Width, Engine.CharacterSize * HoveredOn), NewColor(Hue, S + .25f, .75f, 0)));
+                    _gradient.Append(new Vertex(new Vector2f(10 + _texts[HoveredOn].GetGlobalBounds().Width, Engine.CharacterSize * (HoveredOn + 1)), NewColor(Hue, S + .25f, .75f, 0)));
+                    _gradient.Append(new Vertex(new Vector2f(10, Engine.CharacterSize * (HoveredOn + 1)), NewColor(Hue, S + .25f, .75f, (byte)Utilities.Min(255, A * 4))));
                 }
 
                 if (SelectedIndex != -1)
                 {
-                    _gradient.Append(new Vertex(new Vector2f(0, 6 + currPadPos), new HSVColor(Hue, .8f, .8f)));
-                    _gradient.Append(new Vertex(new Vector2f(6, 6 + currPadPos), new HSVColor(Hue, .8f, .8f)));
-                    _gradient.Append(new Vertex(new Vector2f(6, 1 + currPadPos), new HSVColor(Hue, .42f, .8f)));
-                    _gradient.Append(new Vertex(new Vector2f(0, 1 + currPadPos), new HSVColor(Hue, .42f, .8f)));
+                    _gradient.Append(new Vertex(new Vector2f(0, 6 + currPadPos), NewColor(Hue, .8f, .8f)));
+                    _gradient.Append(new Vertex(new Vector2f(6, 6 + currPadPos), NewColor(Hue, .8f, .8f)));
+                    _gradient.Append(new Vertex(new Vector2f(6, 1 + currPadPos), NewColor(Hue, .42f, .8f)));
+                    _gradient.Append(new Vertex(new Vector2f(0, 1 + currPadPos), NewColor(Hue, .42f, .8f)));
 
-                    _lines.Append(new Vertex(new Vector2f(1, 1 + currPadPos), new HSVColor(Hue, .32f, .8f)));
-                    _lines.Append(new Vertex(new Vector2f(5, 1 + currPadPos), new HSVColor(Hue, .32f, .8f)));
+                    _lines.Append(new Vertex(new Vector2f(1, 1 + currPadPos), NewColor(Hue, .32f, .8f)));
+                    _lines.Append(new Vertex(new Vector2f(5, 1 + currPadPos), NewColor(Hue, .32f, .8f)));
 
-                    _gradient.Append(new Vertex(new Vector2f(0, 6 + currPadPos), new HSVColor(Hue, 1f, .65f)));
-                    _gradient.Append(new Vertex(new Vector2f(6, 6 + currPadPos), new HSVColor(Hue, 1f, .65f)));
-                    _gradient.Append(new Vertex(new Vector2f(6, 11 + currPadPos), new HSVColor(Hue - 20, 1, 1)));
-                    _gradient.Append(new Vertex(new Vector2f(0, 11 + currPadPos), new HSVColor(Hue - 20, 1, 1)));
+                    _gradient.Append(new Vertex(new Vector2f(0, 6 + currPadPos), NewColor(Hue, 1f, .65f)));
+                    _gradient.Append(new Vertex(new Vector2f(6, 6 + currPadPos), NewColor(Hue, 1f, .65f)));
+                    _gradient.Append(new Vertex(new Vector2f(6, 11 + currPadPos), NewColor(Hue - 20, 1, 1)));
+                    _gradient.Append(new Vertex(new Vector2f(0, 11 + currPadPos), NewColor(Hue - 20, 1, 1)));
 
-                    _lines.Append(new Vertex(new Vector2f(1, 12 + currPadPos), new HSVColor(Hue - 20, 1, 1)));
-                    _lines.Append(new Vertex(new Vector2f(5, 12 + currPadPos), new HSVColor(Hue - 20, 1, 1)));
+                    _lines.Append(new Vertex(new Vector2f(1, 12 + currPadPos), NewColor(Hue - 20, 1, 1)));
+                    _lines.Append(new Vertex(new Vector2f(5, 12 + currPadPos), NewColor(Hue - 20, 1, 1)));
 
                     //light
-                    float min = 1, max = Items.Count * Engine.CharacterSize;
                     float highBorder = Utilities.Max(1 + currPadPos - Engine.CharacterSize, 0);
                     float lowBorder = Utilities.Min(11 + currPadPos + Engine.CharacterSize, Items.Count * Engine.CharacterSize);
                     byte highAlpha = (byte)Utilities.Interpolation(Utilities.Percent(currPadPos, 0, Engine.CharacterSize), 255f, 0);
                     byte lowAlpha = (byte)Utilities.Interpolation(Utilities.Percent((Items.Count - 1) * Engine.CharacterSize - currPadPos, 0, Engine.CharacterSize), 255f, 0);
-                    _gradient.Append(new Vertex(new Vector2f(0, 1 + currPadPos), new HSVColor(Hue, .75f, .75f)));
-                    _gradient.Append(new Vertex(new Vector2f(6, 1 + currPadPos), new HSVColor(Hue, .75f, .75f)));
-                    _gradient.Append(new Vertex(new Vector2f(6, highBorder), new HSVColor(Hue, .75f, .75f, highAlpha)));
-                    _gradient.Append(new Vertex(new Vector2f(0, highBorder), new HSVColor(Hue, .75f, .75f, highAlpha)));
+                    _gradient.Append(new Vertex(new Vector2f(0, 1 + currPadPos), NewColor(Hue, .75f, .75f)));
+                    _gradient.Append(new Vertex(new Vector2f(6, 1 + currPadPos), NewColor(Hue, .75f, .75f)));
+                    _gradient.Append(new Vertex(new Vector2f(6, highBorder), NewColor(Hue, .75f, .75f, highAlpha)));
+                    _gradient.Append(new Vertex(new Vector2f(0, highBorder), NewColor(Hue, .75f, .75f, highAlpha)));
 
-                    _gradient.Append(new Vertex(new Vector2f(0, 11 + currPadPos), new HSVColor(Hue, .75f, .75f)));
-                    _gradient.Append(new Vertex(new Vector2f(6, 11 + currPadPos), new HSVColor(Hue, .75f, .75f)));
-                    _gradient.Append(new Vertex(new Vector2f(6, lowBorder), new HSVColor(Hue, .75f, .75f, lowAlpha)));
-                    _gradient.Append(new Vertex(new Vector2f(0, lowBorder), new HSVColor(Hue, .75f, .75f, lowAlpha)));
+                    _gradient.Append(new Vertex(new Vector2f(0, 11 + currPadPos), NewColor(Hue, .75f, .75f)));
+                    _gradient.Append(new Vertex(new Vector2f(6, 11 + currPadPos), NewColor(Hue, .75f, .75f)));
+                    _gradient.Append(new Vertex(new Vector2f(6, lowBorder), NewColor(Hue, .75f, .75f, lowAlpha)));
+                    _gradient.Append(new Vertex(new Vector2f(0, lowBorder), NewColor(Hue, .75f, .75f, lowAlpha)));
                 }
             }
         }

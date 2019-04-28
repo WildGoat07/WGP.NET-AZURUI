@@ -33,6 +33,11 @@ namespace WGP.AzurUI
         #region Public Properties
 
         /// <summary>
+        /// When enabled, a widget handle events, otherwise it becomes grey and doesn't react.
+        /// </summary>
+        public bool Enabled { get; set; }
+
+        /// <summary>
         /// AABB of the widget after applying its position.
         /// </summary>
         public FloatRect GlobalBounds => new FloatRect(LocalBounds.TopLeft() + Position, LocalBounds.Size());
@@ -79,5 +84,19 @@ namespace WGP.AzurUI
         public abstract void Update(RenderWindow app);
 
         #endregion Public Methods
+
+        #region Protected Methods
+
+        /// <summary>
+        /// Use this method to create a new color instead of newHSVColor(). Handles the Enabled porperty.
+        /// </summary>
+        /// <param name="hue">Hue of the color.</param>
+        /// <param name="saturation">Saturation of the color.</param>
+        /// <param name="value">Value of the color.</param>
+        /// <param name="alpha">Transparency of the color.</param>
+        /// <returns>Created color.</returns>
+        protected HSVColor NewColor(float hue, float saturation, float value, byte alpha = 255) => new HSVColor(hue, Enabled ? saturation : 0, Enabled ? value : value * .7f, alpha);
+
+        #endregion Protected Methods
     }
 }

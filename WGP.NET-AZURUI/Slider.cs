@@ -347,7 +347,7 @@ namespace WGP.AzurUI
         /// <param name="target">Target to draw the widget on.</param>
         public override void DrawOn(RenderTarget target)
         {
-            PadRenderer.Clear(new HSVColor(Hue, .2f, 1));
+            PadRenderer.Clear(NewColor(Hue, .2f, 1));
             PadRenderer.Draw(UpPadVertice);
             PadRenderer.Draw(DownPadVertice);
             PadRenderer.Display();
@@ -403,6 +403,11 @@ namespace WGP.AzurUI
             }
             if (oldHover != Hovered || (oldPress == 0 && Pressing != 0))
                 _chronometer.Restart();
+            if (!Enabled)
+            {
+                Hovered = false;
+                Pressing = 0;
+            }
             int iSize = (int)Size;
             Lines.Clear();
             DownPadVertice.Clear();
@@ -464,11 +469,11 @@ namespace WGP.AzurUI
                 Lines.Append(new Vertex(new Vector2f(), Color.Black));
                 Lines.Append(new Vertex(new Vector2f(iSize, 0), Color.Black));
 
-                Lines.Append(new Vertex(new Vector2f(0, -1), new HSVColor(Hue, .25f, .25f)));
-                Lines.Append(new Vertex(new Vector2f(iSize, -1), new HSVColor(Hue, .25f, .25f)));
+                Lines.Append(new Vertex(new Vector2f(0, -1), NewColor(Hue, .25f, .25f)));
+                Lines.Append(new Vertex(new Vector2f(iSize, -1), NewColor(Hue, .25f, .25f)));
 
-                Lines.Append(new Vertex(new Vector2f(0, 1), new HSVColor(Hue, .25f, .5f)));
-                Lines.Append(new Vertex(new Vector2f(iSize, 1), new HSVColor(Hue, .25f, .5f)));
+                Lines.Append(new Vertex(new Vector2f(0, 1), NewColor(Hue, .25f, .5f)));
+                Lines.Append(new Vertex(new Vector2f(iSize, 1), NewColor(Hue, .25f, .5f)));
 
                 int pos1, pos2;
                 pos1 = (int)(Utilities.Percent(_value1, Minimum, Maximum) * iSize);
@@ -477,68 +482,68 @@ namespace WGP.AzurUI
                 else
                     pos2 = 0;
 
-                Lines.Append(new Vertex(new Vector2f(pos1, -2), new HSVColor(Hue, .75f, 1, 128)));
-                Lines.Append(new Vertex(new Vector2f(pos2, -2), new HSVColor(Hue, .75f, 1, 128)));
+                Lines.Append(new Vertex(new Vector2f(pos1, -2), NewColor(Hue, .75f, 1, 128)));
+                Lines.Append(new Vertex(new Vector2f(pos2, -2), NewColor(Hue, .75f, 1, 128)));
 
-                Lines.Append(new Vertex(new Vector2f(pos1, 2), new HSVColor(Hue, .75f, 1, 128)));
-                Lines.Append(new Vertex(new Vector2f(pos2, 2), new HSVColor(Hue, .75f, 1, 128)));
+                Lines.Append(new Vertex(new Vector2f(pos1, 2), NewColor(Hue, .75f, 1, 128)));
+                Lines.Append(new Vertex(new Vector2f(pos2, 2), NewColor(Hue, .75f, 1, 128)));
 
                 if (Pressing == 0)
                 {
-                    Lines.Append(new Vertex(new Vector2f(pos1, 0), new HSVColor(Hue, .75f, .75f)));
-                    Lines.Append(new Vertex(new Vector2f(pos2, 0), new HSVColor(Hue, .75f, .75f)));
+                    Lines.Append(new Vertex(new Vector2f(pos1, 0), NewColor(Hue, .75f, .75f)));
+                    Lines.Append(new Vertex(new Vector2f(pos2, 0), NewColor(Hue, .75f, .75f)));
 
-                    Lines.Append(new Vertex(new Vector2f(pos1, -1), new HSVColor(Hue, .35f, .85f)));
-                    Lines.Append(new Vertex(new Vector2f(pos2, -1), new HSVColor(Hue, .35f, .85f)));
+                    Lines.Append(new Vertex(new Vector2f(pos1, -1), NewColor(Hue, .35f, .85f)));
+                    Lines.Append(new Vertex(new Vector2f(pos2, -1), NewColor(Hue, .35f, .85f)));
 
-                    Lines.Append(new Vertex(new Vector2f(pos1, 1), new HSVColor(Hue, .35f, .85f)));
-                    Lines.Append(new Vertex(new Vector2f(pos2, 1), new HSVColor(Hue, .35f, .85f)));
+                    Lines.Append(new Vertex(new Vector2f(pos1, 1), NewColor(Hue, .35f, .85f)));
+                    Lines.Append(new Vertex(new Vector2f(pos2, 1), NewColor(Hue, .35f, .85f)));
                 }
                 else
                 {
-                    Lines.Append(new Vertex(new Vector2f(pos1, 0), new HSVColor(Hue, .2f, 1)));
-                    Lines.Append(new Vertex(new Vector2f(pos2, 0), new HSVColor(Hue, .2f, 1)));
+                    Lines.Append(new Vertex(new Vector2f(pos1, 0), NewColor(Hue, .2f, 1)));
+                    Lines.Append(new Vertex(new Vector2f(pos2, 0), NewColor(Hue, .2f, 1)));
 
-                    Lines.Append(new Vertex(new Vector2f(pos1, -1), new HSVColor(Hue, .6f, 1)));
-                    Lines.Append(new Vertex(new Vector2f(pos2, -1), new HSVColor(Hue, .6f, 1)));
+                    Lines.Append(new Vertex(new Vector2f(pos1, -1), NewColor(Hue, .6f, 1)));
+                    Lines.Append(new Vertex(new Vector2f(pos2, -1), NewColor(Hue, .6f, 1)));
 
-                    Lines.Append(new Vertex(new Vector2f(pos1, 1), new HSVColor(Hue, .6f, 1)));
-                    Lines.Append(new Vertex(new Vector2f(pos2, 1), new HSVColor(Hue, .6f, 1)));
+                    Lines.Append(new Vertex(new Vector2f(pos1, 1), NewColor(Hue, .6f, 1)));
+                    Lines.Append(new Vertex(new Vector2f(pos2, 1), NewColor(Hue, .6f, 1)));
                 }
                 if (Hovered && Pressing == 0)
                 {
-                    Light1.Append(new Vertex(new Vector2f(pos1 - .5f, -.5f), new HSVColor(Hue, .6f, 1)));
+                    Light1.Append(new Vertex(new Vector2f(pos1 - .5f, -.5f), NewColor(Hue, .6f, 1)));
                     for (int i = 0; i <= 20; i++)
-                        Light1.Append(new Vertex(new Vector2f(pos1 - .5f, -.5f) + (Angle.Loop * i / 20).GenerateVector(12), new HSVColor(Hue, .6f, 1, 0)));
+                        Light1.Append(new Vertex(new Vector2f(pos1 - .5f, -.5f) + (Angle.Loop * i / 20).GenerateVector(12), NewColor(Hue, .6f, 1, 0)));
                     if (DoublePad)
                     {
-                        Light2.Append(new Vertex(new Vector2f(pos2 - .5f, -.5f), new HSVColor(Hue, .6f, 1)));
+                        Light2.Append(new Vertex(new Vector2f(pos2 - .5f, -.5f), NewColor(Hue, .6f, 1)));
                         for (int i = 0; i <= 20; i++)
-                            Light2.Append(new Vertex(new Vector2f(pos2 - .5f, -.5f) + (Angle.Loop * i / 20).GenerateVector(12), new HSVColor(Hue, .6f, 1, 0)));
+                            Light2.Append(new Vertex(new Vector2f(pos2 - .5f, -.5f) + (Angle.Loop * i / 20).GenerateVector(12), NewColor(Hue, .6f, 1, 0)));
                     }
                 }
                 if (Pressing == 1)
                 {
-                    Light1.Append(new Vertex(new Vector2f(pos1 - .5f, -.5f), new HSVColor(Hue, .6f, 1)));
+                    Light1.Append(new Vertex(new Vector2f(pos1 - .5f, -.5f), NewColor(Hue, .6f, 1)));
                     for (int i = 0; i <= 20; i++)
-                        Light1.Append(new Vertex(new Vector2f(pos1 - .5f, -.5f) + (Angle.Loop * i / 20).GenerateVector(12), new HSVColor(Hue, .6f, 1, 0)));
+                        Light1.Append(new Vertex(new Vector2f(pos1 - .5f, -.5f) + (Angle.Loop * i / 20).GenerateVector(15), NewColor(Hue, .6f, 1, 0)));
                 }
                 else if (Pressing == 2)
                 {
-                    Light2.Append(new Vertex(new Vector2f(pos2 - .5f, -.5f), new HSVColor(Hue, .6f, 1)));
+                    Light2.Append(new Vertex(new Vector2f(pos2 - .5f, -.5f), NewColor(Hue, .6f, 1)));
                     for (int i = 0; i <= 20; i++)
-                        Light2.Append(new Vertex(new Vector2f(pos2 - .5f, -.5f) + (Angle.Loop * i / 20).GenerateVector(12), new HSVColor(Hue, .6f, 1, 0)));
+                        Light2.Append(new Vertex(new Vector2f(pos2 - .5f, -.5f) + (Angle.Loop * i / 20).GenerateVector(15), NewColor(Hue, .6f, 1, 0)));
                 }
                 Pad1.Position = new Vector2f(pos1, 0);
                 Pad2.Position = new Vector2f(pos2, 0);
 
-                UpPadVertice.Append(new Vertex(new Vector2f(6.5f, 6.5f), new HSVColor(Hue, .6f, .65f)));
+                UpPadVertice.Append(new Vertex(new Vector2f(6.5f, 6.5f), NewColor(Hue, .6f, .65f)));
                 for (int i = 0; i <= 10; i++)
-                    UpPadVertice.Append(new Vertex(new Vector2f(6.5f, 6.5f) + (Angle.Loop * i / 20 + Angle.Loop / 2).GenerateVector(7), new HSVColor(Hue, .2f, .95f)));
-                DownPadVertice.Append(new Vertex(new Vector2f(0, 6.5f), new HSVColor(Hue, 1, .65f)));
-                DownPadVertice.Append(new Vertex(new Vector2f(13, 6.5f), new HSVColor(Hue, 1, .65f)));
-                DownPadVertice.Append(new Vertex(new Vector2f(13, 13), new HSVColor(Hue - 20, .75f, .95f)));
-                DownPadVertice.Append(new Vertex(new Vector2f(0, 13), new HSVColor(Hue - 20, .75f, .95f)));
+                    UpPadVertice.Append(new Vertex(new Vector2f(6.5f, 6.5f) + (Angle.Loop * i / 20 + Angle.Loop / 2).GenerateVector(7), NewColor(Hue, .2f, .95f)));
+                DownPadVertice.Append(new Vertex(new Vector2f(0, 6.5f), NewColor(Hue, 1, .65f)));
+                DownPadVertice.Append(new Vertex(new Vector2f(13, 6.5f), NewColor(Hue, 1, .65f)));
+                DownPadVertice.Append(new Vertex(new Vector2f(13, 13), NewColor(Hue - 20, .75f, .95f)));
+                DownPadVertice.Append(new Vertex(new Vector2f(0, 13), NewColor(Hue - 20, .75f, .95f)));
 
                 if ((TickConfig & TickType.BOT_RIGHT) == TickType.BOT_RIGHT)
                 {
@@ -596,11 +601,11 @@ namespace WGP.AzurUI
                 Lines.Append(new Vertex(new Vector2f(), Color.Black));
                 Lines.Append(new Vertex(new Vector2f(0, -iSize), Color.Black));
 
-                Lines.Append(new Vertex(new Vector2f(-1, 0), new HSVColor(Hue, .25f, .25f)));
-                Lines.Append(new Vertex(new Vector2f(-1, -iSize), new HSVColor(Hue, .25f, .25f)));
+                Lines.Append(new Vertex(new Vector2f(-1, 0), NewColor(Hue, .25f, .25f)));
+                Lines.Append(new Vertex(new Vector2f(-1, -iSize), NewColor(Hue, .25f, .25f)));
 
-                Lines.Append(new Vertex(new Vector2f(1, 0), new HSVColor(Hue, .25f, .5f)));
-                Lines.Append(new Vertex(new Vector2f(1, -iSize), new HSVColor(Hue, .25f, .5f)));
+                Lines.Append(new Vertex(new Vector2f(1, 0), NewColor(Hue, .25f, .5f)));
+                Lines.Append(new Vertex(new Vector2f(1, -iSize), NewColor(Hue, .25f, .5f)));
 
                 int pos1, pos2;
                 pos1 = -(int)(Utilities.Percent(_value1, Minimum, Maximum) * iSize);
@@ -609,68 +614,68 @@ namespace WGP.AzurUI
                 else
                     pos2 = 0;
 
-                Lines.Append(new Vertex(new Vector2f(-2, pos1), new HSVColor(Hue, .75f, 1, 128)));
-                Lines.Append(new Vertex(new Vector2f(-2, pos2), new HSVColor(Hue, .75f, 1, 128)));
+                Lines.Append(new Vertex(new Vector2f(-2, pos1), NewColor(Hue, .75f, 1, 128)));
+                Lines.Append(new Vertex(new Vector2f(-2, pos2), NewColor(Hue, .75f, 1, 128)));
 
-                Lines.Append(new Vertex(new Vector2f(2, pos1), new HSVColor(Hue, .75f, 1, 128)));
-                Lines.Append(new Vertex(new Vector2f(2, pos2), new HSVColor(Hue, .75f, 1, 128)));
+                Lines.Append(new Vertex(new Vector2f(2, pos1), NewColor(Hue, .75f, 1, 128)));
+                Lines.Append(new Vertex(new Vector2f(2, pos2), NewColor(Hue, .75f, 1, 128)));
 
                 if (Pressing == 0)
                 {
-                    Lines.Append(new Vertex(new Vector2f(0, pos1), new HSVColor(Hue, .75f, .75f)));
-                    Lines.Append(new Vertex(new Vector2f(0, pos2), new HSVColor(Hue, .75f, .75f)));
+                    Lines.Append(new Vertex(new Vector2f(0, pos1), NewColor(Hue, .75f, .75f)));
+                    Lines.Append(new Vertex(new Vector2f(0, pos2), NewColor(Hue, .75f, .75f)));
 
-                    Lines.Append(new Vertex(new Vector2f(-1, pos1), new HSVColor(Hue, .35f, .85f)));
-                    Lines.Append(new Vertex(new Vector2f(-1, pos2), new HSVColor(Hue, .35f, .85f)));
+                    Lines.Append(new Vertex(new Vector2f(-1, pos1), NewColor(Hue, .35f, .85f)));
+                    Lines.Append(new Vertex(new Vector2f(-1, pos2), NewColor(Hue, .35f, .85f)));
 
-                    Lines.Append(new Vertex(new Vector2f(1, pos1), new HSVColor(Hue, .35f, .85f)));
-                    Lines.Append(new Vertex(new Vector2f(1, pos2), new HSVColor(Hue, .35f, .85f)));
+                    Lines.Append(new Vertex(new Vector2f(1, pos1), NewColor(Hue, .35f, .85f)));
+                    Lines.Append(new Vertex(new Vector2f(1, pos2), NewColor(Hue, .35f, .85f)));
                 }
                 else
                 {
-                    Lines.Append(new Vertex(new Vector2f(0, pos1), new HSVColor(Hue, .2f, 1)));
-                    Lines.Append(new Vertex(new Vector2f(0, pos2), new HSVColor(Hue, .2f, 1)));
+                    Lines.Append(new Vertex(new Vector2f(0, pos1), NewColor(Hue, .2f, 1)));
+                    Lines.Append(new Vertex(new Vector2f(0, pos2), NewColor(Hue, .2f, 1)));
 
-                    Lines.Append(new Vertex(new Vector2f(-1, pos1), new HSVColor(Hue, .6f, 1)));
-                    Lines.Append(new Vertex(new Vector2f(-1, pos2), new HSVColor(Hue, .6f, 1)));
+                    Lines.Append(new Vertex(new Vector2f(-1, pos1), NewColor(Hue, .6f, 1)));
+                    Lines.Append(new Vertex(new Vector2f(-1, pos2), NewColor(Hue, .6f, 1)));
 
-                    Lines.Append(new Vertex(new Vector2f(1, pos1), new HSVColor(Hue, .6f, 1)));
-                    Lines.Append(new Vertex(new Vector2f(1, pos2), new HSVColor(Hue, .6f, 1)));
+                    Lines.Append(new Vertex(new Vector2f(1, pos1), NewColor(Hue, .6f, 1)));
+                    Lines.Append(new Vertex(new Vector2f(1, pos2), NewColor(Hue, .6f, 1)));
                 }
                 if (Hovered && Pressing == 0)
                 {
-                    Light1.Append(new Vertex(new Vector2f(-.5f, pos1 - .5f), new HSVColor(Hue, .6f, 1)));
+                    Light1.Append(new Vertex(new Vector2f(-.5f, pos1 - .5f), NewColor(Hue, .6f, 1)));
                     for (int i = 0; i <= 20; i++)
-                        Light1.Append(new Vertex(new Vector2f(-.5f, pos1 - .5f) + (Angle.Loop * i / 20).GenerateVector(12), new HSVColor(Hue, .6f, 1, 0)));
+                        Light1.Append(new Vertex(new Vector2f(-.5f, pos1 - .5f) + (Angle.Loop * i / 20).GenerateVector(12), NewColor(Hue, .6f, 1, 0)));
                     if (DoublePad)
                     {
-                        Light2.Append(new Vertex(new Vector2f(-.5f, pos2 - .5f), new HSVColor(Hue, .6f, 1)));
+                        Light2.Append(new Vertex(new Vector2f(-.5f, pos2 - .5f), NewColor(Hue, .6f, 1)));
                         for (int i = 0; i <= 20; i++)
-                            Light2.Append(new Vertex(new Vector2f(-.5f, pos2 - .5f) + (Angle.Loop * i / 20).GenerateVector(12), new HSVColor(Hue, .6f, 1, 0)));
+                            Light2.Append(new Vertex(new Vector2f(-.5f, pos2 - .5f) + (Angle.Loop * i / 20).GenerateVector(12), NewColor(Hue, .6f, 1, 0)));
                     }
                 }
                 if (Pressing == 1)
                 {
-                    Light1.Append(new Vertex(new Vector2f(-.5f, pos1 - .5f), new HSVColor(Hue, .6f, 1)));
+                    Light1.Append(new Vertex(new Vector2f(-.5f, pos1 - .5f), NewColor(Hue, .6f, 1)));
                     for (int i = 0; i <= 20; i++)
-                        Light1.Append(new Vertex(new Vector2f(-.5f, pos1 - .5f) + (Angle.Loop * i / 20).GenerateVector(12), new HSVColor(Hue, .6f, 1, 0)));
+                        Light1.Append(new Vertex(new Vector2f(-.5f, pos1 - .5f) + (Angle.Loop * i / 20).GenerateVector(15), NewColor(Hue, .6f, 1, 0)));
                 }
                 else if (Pressing == 2)
                 {
-                    Light2.Append(new Vertex(new Vector2f(-.5f, pos2 - .5f), new HSVColor(Hue, .6f, 1)));
+                    Light2.Append(new Vertex(new Vector2f(-.5f, pos2 - .5f), NewColor(Hue, .6f, 1)));
                     for (int i = 0; i <= 20; i++)
-                        Light2.Append(new Vertex(new Vector2f(-.5f, pos2 - .5f) + (Angle.Loop * i / 20).GenerateVector(12), new HSVColor(Hue, .6f, 1, 0)));
+                        Light2.Append(new Vertex(new Vector2f(-.5f, pos2 - .5f) + (Angle.Loop * i / 20).GenerateVector(15), NewColor(Hue, .6f, 1, 0)));
                 }
                 Pad1.Position = new Vector2f(0, pos1);
                 Pad2.Position = new Vector2f(0, pos2);
 
-                UpPadVertice.Append(new Vertex(new Vector2f(6.5f, 6.5f), new HSVColor(Hue, .6f, .65f)));
+                UpPadVertice.Append(new Vertex(new Vector2f(6.5f, 6.5f), NewColor(Hue, .6f, .65f)));
                 for (int i = 0; i <= 10; i++)
-                    UpPadVertice.Append(new Vertex(new Vector2f(6.5f, 6.5f) + (Angle.Loop * i / 20 + Angle.Loop / 2).GenerateVector(7), new HSVColor(Hue, .2f, .95f)));
-                DownPadVertice.Append(new Vertex(new Vector2f(0, 6.5f), new HSVColor(Hue, 1, .65f)));
-                DownPadVertice.Append(new Vertex(new Vector2f(13, 6.5f), new HSVColor(Hue, 1, .65f)));
-                DownPadVertice.Append(new Vertex(new Vector2f(13, 13), new HSVColor(Hue - 20, .75f, .95f)));
-                DownPadVertice.Append(new Vertex(new Vector2f(0, 13), new HSVColor(Hue - 20, .75f, .95f)));
+                    UpPadVertice.Append(new Vertex(new Vector2f(6.5f, 6.5f) + (Angle.Loop * i / 20 + Angle.Loop / 2).GenerateVector(7), NewColor(Hue, .2f, .95f)));
+                DownPadVertice.Append(new Vertex(new Vector2f(0, 6.5f), NewColor(Hue, 1, .65f)));
+                DownPadVertice.Append(new Vertex(new Vector2f(13, 6.5f), NewColor(Hue, 1, .65f)));
+                DownPadVertice.Append(new Vertex(new Vector2f(13, 13), NewColor(Hue - 20, .75f, .95f)));
+                DownPadVertice.Append(new Vertex(new Vector2f(0, 13), NewColor(Hue - 20, .75f, .95f)));
 
                 if ((TickConfig & TickType.BOT_RIGHT) == TickType.BOT_RIGHT)
                 {

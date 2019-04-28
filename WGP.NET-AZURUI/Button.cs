@@ -154,25 +154,25 @@ namespace WGP.AzurUI
             _gradient.Clear();
             if (Pressing)
             {
-                _gradient.Append(new Vertex(new Vector2f(-HalfSize.X + 1, -HalfSize.Y + 1), new HSVColor(Hue, s / 2, .47f,
+                _gradient.Append(new Vertex(new Vector2f(-HalfSize.X + 1, -HalfSize.Y + 1), NewColor(Hue, s / 2, .47f,
                     (byte)Utilities.Interpolation(Utilities.Percent(_chronometer.ElapsedTime, Time.Zero, Time.FromMilliseconds(1000)), 60f, 255))));
-                _gradient.Append(new Vertex(new Vector2f(HalfSize.X - 2, -HalfSize.Y + 1), new HSVColor(Hue, s / 2, .47f,
+                _gradient.Append(new Vertex(new Vector2f(HalfSize.X - 2, -HalfSize.Y + 1), NewColor(Hue, s / 2, .47f,
                     (byte)Utilities.Interpolation(Utilities.Percent(_chronometer.ElapsedTime, Time.Zero, Time.FromMilliseconds(1000)), 60f, 255))));
             }
             else if (Hovered)
             {
-                _gradient.Append(new Vertex(new Vector2f(-HalfSize.X + 1, -HalfSize.Y + 1), new HSVColor(Hue, s / 2, .47f,
+                _gradient.Append(new Vertex(new Vector2f(-HalfSize.X + 1, -HalfSize.Y + 1), NewColor(Hue, s / 2, .47f,
                     (byte)Utilities.Interpolation(Utilities.Percent(_chronometer.ElapsedTime, Time.Zero, Time.FromMilliseconds(500)), 0f, 60))));
-                _gradient.Append(new Vertex(new Vector2f(HalfSize.X - 2, -HalfSize.Y + 1), new HSVColor(Hue, s / 2, .47f,
+                _gradient.Append(new Vertex(new Vector2f(HalfSize.X - 2, -HalfSize.Y + 1), NewColor(Hue, s / 2, .47f,
                     (byte)Utilities.Interpolation(Utilities.Percent(_chronometer.ElapsedTime, Time.Zero, Time.FromMilliseconds(500)), 0f, 60))));
             }
             else
             {
-                _gradient.Append(new Vertex(new Vector2f(-HalfSize.X + 1, -HalfSize.Y + 2), new HSVColor(Hue, s / 2, .47f, 0)));
-                _gradient.Append(new Vertex(new Vector2f(HalfSize.X - 2, -HalfSize.Y + 2), new HSVColor(Hue, s / 2, .47f, 0)));
+                _gradient.Append(new Vertex(new Vector2f(-HalfSize.X + 1, -HalfSize.Y + 2), NewColor(Hue, s / 2, .47f, 0)));
+                _gradient.Append(new Vertex(new Vector2f(HalfSize.X - 2, -HalfSize.Y + 2), NewColor(Hue, s / 2, .47f, 0)));
             }
-            _gradient.Append(new Vertex(new Vector2f(HalfSize.X - 2, HalfSize.Y - 2), new HSVColor(Hue, s, .47f + bonusV)));
-            _gradient.Append(new Vertex(new Vector2f(-HalfSize.X + 1, HalfSize.Y - 2), new HSVColor(Hue, s, .47f + bonusV)));
+            _gradient.Append(new Vertex(new Vector2f(HalfSize.X - 2, HalfSize.Y - 2), NewColor(Hue, s, .47f + bonusV)));
+            _gradient.Append(new Vertex(new Vector2f(-HalfSize.X + 1, HalfSize.Y - 2), NewColor(Hue, s, .47f + bonusV)));
 
             _lines.Clear();
             var actualBonus = bonusV * 1.2f;
@@ -185,71 +185,71 @@ namespace WGP.AzurUI
             if (Pressing)
             {
                 bonusV = Utilities.Interpolation(Utilities.Percent(_chronometer.ElapsedTime, threshold, threshold + increase), bonus0, actualBonus);
-                _lines.Append(new Vertex(new Vector2f(-HalfSize.X + 3, -HalfSize.Y + 1), new HSVColor(Hue, s, .47f + bonusV)));
+                _lines.Append(new Vertex(new Vector2f(-HalfSize.X + 3, -HalfSize.Y + 1), NewColor(Hue, s, .47f + bonusV)));
                 threshold += increase;
                 bonusV = Utilities.Interpolation(Utilities.Percent(_chronometer.ElapsedTime, threshold, threshold + increase), bonus0, actualBonus);
-                _lines.Append(new Vertex(new Vector2f(HalfSize.X - 3, -HalfSize.Y + 1), new HSVColor(Hue, s, .47f + bonusV)));
+                _lines.Append(new Vertex(new Vector2f(HalfSize.X - 3, -HalfSize.Y + 1), NewColor(Hue, s, .47f + bonusV)));
 
-                _lines.Append(new Vertex(new Vector2f(HalfSize.X - 3, -HalfSize.Y + 1), new HSVColor(Hue, s, .47f + bonusV)));
+                _lines.Append(new Vertex(new Vector2f(HalfSize.X - 3, -HalfSize.Y + 1), NewColor(Hue, s, .47f + bonusV)));
                 threshold += increase;
                 bonusV = Utilities.Interpolation(Utilities.Percent(_chronometer.ElapsedTime, threshold, threshold + increase), bonus0, actualBonus);
-                _lines.Append(new Vertex(new Vector2f(HalfSize.X - 1, -HalfSize.Y + 3), new HSVColor(Hue, s, .47f + bonusV)));
+                _lines.Append(new Vertex(new Vector2f(HalfSize.X - 1, -HalfSize.Y + 3), NewColor(Hue, s, .47f + bonusV)));
 
-                _lines.Append(new Vertex(new Vector2f(HalfSize.X - 1, -HalfSize.Y + 3), new HSVColor(Hue, s, .47f + bonusV)));
+                _lines.Append(new Vertex(new Vector2f(HalfSize.X - 1, -HalfSize.Y + 3), NewColor(Hue, s, .47f + bonusV)));
                 threshold += increase;
                 bonusV = Utilities.Interpolation(Utilities.Percent(_chronometer.ElapsedTime, threshold, threshold + increase), bonus0, actualBonus);
-                _lines.Append(new Vertex(new Vector2f(HalfSize.X - 1, HalfSize.Y - 3), new HSVColor(Hue, s, .47f + bonusV)));
+                _lines.Append(new Vertex(new Vector2f(HalfSize.X - 1, HalfSize.Y - 3), NewColor(Hue, s, .47f + bonusV)));
 
-                _lines.Append(new Vertex(new Vector2f(HalfSize.X - 1, HalfSize.Y - 3), new HSVColor(Hue, s, .47f + bonusV)));
+                _lines.Append(new Vertex(new Vector2f(HalfSize.X - 1, HalfSize.Y - 3), NewColor(Hue, s, .47f + bonusV)));
                 threshold += increase;
                 bonusV = Utilities.Interpolation(Utilities.Percent(_chronometer.ElapsedTime, threshold, threshold + increase), bonus0, actualBonus);
-                _lines.Append(new Vertex(new Vector2f(HalfSize.X - 3, HalfSize.Y - 1), new HSVColor(Hue, s, .47f + bonusV)));
+                _lines.Append(new Vertex(new Vector2f(HalfSize.X - 3, HalfSize.Y - 1), NewColor(Hue, s, .47f + bonusV)));
 
-                _lines.Append(new Vertex(new Vector2f(HalfSize.X - 3, HalfSize.Y - 1), new HSVColor(Hue, s, .47f + bonusV)));
+                _lines.Append(new Vertex(new Vector2f(HalfSize.X - 3, HalfSize.Y - 1), NewColor(Hue, s, .47f + bonusV)));
                 threshold += increase;
                 bonusV = Utilities.Interpolation(Utilities.Percent(_chronometer.ElapsedTime, threshold, threshold + increase), bonus0, actualBonus);
-                _lines.Append(new Vertex(new Vector2f(-HalfSize.X + 3, HalfSize.Y - 1), new HSVColor(Hue, s, .47f + bonusV)));
+                _lines.Append(new Vertex(new Vector2f(-HalfSize.X + 3, HalfSize.Y - 1), NewColor(Hue, s, .47f + bonusV)));
 
-                _lines.Append(new Vertex(new Vector2f(-HalfSize.X + 3, HalfSize.Y - 1), new HSVColor(Hue, s, .47f + bonusV)));
+                _lines.Append(new Vertex(new Vector2f(-HalfSize.X + 3, HalfSize.Y - 1), NewColor(Hue, s, .47f + bonusV)));
                 threshold += increase;
                 bonusV = Utilities.Interpolation(Utilities.Percent(_chronometer.ElapsedTime, threshold, threshold + increase), bonus0, actualBonus);
-                _lines.Append(new Vertex(new Vector2f(-HalfSize.X + 1, HalfSize.Y - 3), new HSVColor(Hue, s, .47f + bonusV)));
+                _lines.Append(new Vertex(new Vector2f(-HalfSize.X + 1, HalfSize.Y - 3), NewColor(Hue, s, .47f + bonusV)));
 
-                _lines.Append(new Vertex(new Vector2f(-HalfSize.X + 1, HalfSize.Y - 3), new HSVColor(Hue, s, .47f + bonusV)));
+                _lines.Append(new Vertex(new Vector2f(-HalfSize.X + 1, HalfSize.Y - 3), NewColor(Hue, s, .47f + bonusV)));
                 threshold += increase;
                 bonusV = Utilities.Interpolation(Utilities.Percent(_chronometer.ElapsedTime, threshold, threshold + increase), bonus0, actualBonus);
-                _lines.Append(new Vertex(new Vector2f(-HalfSize.X + 1, -HalfSize.Y + 3), new HSVColor(Hue, s, .47f + bonusV)));
+                _lines.Append(new Vertex(new Vector2f(-HalfSize.X + 1, -HalfSize.Y + 3), NewColor(Hue, s, .47f + bonusV)));
 
-                _lines.Append(new Vertex(new Vector2f(-HalfSize.X + 1, -HalfSize.Y + 3), new HSVColor(Hue, s, .47f + bonusV)));
+                _lines.Append(new Vertex(new Vector2f(-HalfSize.X + 1, -HalfSize.Y + 3), NewColor(Hue, s, .47f + bonusV)));
                 threshold += increase;
                 bonusV = Utilities.Interpolation(Utilities.Percent(_chronometer.ElapsedTime, threshold, threshold + increase), bonus0, actualBonus);
-                _lines.Append(new Vertex(new Vector2f(-HalfSize.X + 3, -HalfSize.Y + 1), new HSVColor(Hue, s, .47f + bonusV)));
+                _lines.Append(new Vertex(new Vector2f(-HalfSize.X + 3, -HalfSize.Y + 1), NewColor(Hue, s, .47f + bonusV)));
             }
             else
             {
-                _lines.Append(new Vertex(new Vector2f(-HalfSize.X + 3, -HalfSize.Y + 1), new HSVColor(Hue, s, .47f + bonusV)));
-                _lines.Append(new Vertex(new Vector2f(HalfSize.X - 3, -HalfSize.Y + 1), new HSVColor(Hue, s, .47f + bonusV)));
+                _lines.Append(new Vertex(new Vector2f(-HalfSize.X + 3, -HalfSize.Y + 1), NewColor(Hue, s, .47f + bonusV)));
+                _lines.Append(new Vertex(new Vector2f(HalfSize.X - 3, -HalfSize.Y + 1), NewColor(Hue, s, .47f + bonusV)));
 
-                _lines.Append(new Vertex(new Vector2f(HalfSize.X - 3, -HalfSize.Y + 1), new HSVColor(Hue, s, .47f + bonusV)));
-                _lines.Append(new Vertex(new Vector2f(HalfSize.X - 1, -HalfSize.Y + 3), new HSVColor(Hue, s, .47f + bonusV)));
+                _lines.Append(new Vertex(new Vector2f(HalfSize.X - 3, -HalfSize.Y + 1), NewColor(Hue, s, .47f + bonusV)));
+                _lines.Append(new Vertex(new Vector2f(HalfSize.X - 1, -HalfSize.Y + 3), NewColor(Hue, s, .47f + bonusV)));
 
-                _lines.Append(new Vertex(new Vector2f(HalfSize.X - 1, -HalfSize.Y + 3), new HSVColor(Hue, s, .47f + bonusV)));
-                _lines.Append(new Vertex(new Vector2f(HalfSize.X - 1, HalfSize.Y - 3), new HSVColor(Hue, s, .47f + bonusV)));
+                _lines.Append(new Vertex(new Vector2f(HalfSize.X - 1, -HalfSize.Y + 3), NewColor(Hue, s, .47f + bonusV)));
+                _lines.Append(new Vertex(new Vector2f(HalfSize.X - 1, HalfSize.Y - 3), NewColor(Hue, s, .47f + bonusV)));
 
-                _lines.Append(new Vertex(new Vector2f(HalfSize.X - 1, HalfSize.Y - 3), new HSVColor(Hue, s, .47f + bonusV)));
-                _lines.Append(new Vertex(new Vector2f(HalfSize.X - 3, HalfSize.Y - 1), new HSVColor(Hue, s, .47f + bonusV)));
+                _lines.Append(new Vertex(new Vector2f(HalfSize.X - 1, HalfSize.Y - 3), NewColor(Hue, s, .47f + bonusV)));
+                _lines.Append(new Vertex(new Vector2f(HalfSize.X - 3, HalfSize.Y - 1), NewColor(Hue, s, .47f + bonusV)));
 
-                _lines.Append(new Vertex(new Vector2f(HalfSize.X - 3, HalfSize.Y - 1), new HSVColor(Hue, s, .47f + bonusV)));
-                _lines.Append(new Vertex(new Vector2f(-HalfSize.X + 3, HalfSize.Y - 1), new HSVColor(Hue, s, .47f + bonusV)));
+                _lines.Append(new Vertex(new Vector2f(HalfSize.X - 3, HalfSize.Y - 1), NewColor(Hue, s, .47f + bonusV)));
+                _lines.Append(new Vertex(new Vector2f(-HalfSize.X + 3, HalfSize.Y - 1), NewColor(Hue, s, .47f + bonusV)));
 
-                _lines.Append(new Vertex(new Vector2f(-HalfSize.X + 3, HalfSize.Y - 1), new HSVColor(Hue, s, .47f + bonusV)));
-                _lines.Append(new Vertex(new Vector2f(-HalfSize.X + 1, HalfSize.Y - 3), new HSVColor(Hue, s, .47f + bonusV)));
+                _lines.Append(new Vertex(new Vector2f(-HalfSize.X + 3, HalfSize.Y - 1), NewColor(Hue, s, .47f + bonusV)));
+                _lines.Append(new Vertex(new Vector2f(-HalfSize.X + 1, HalfSize.Y - 3), NewColor(Hue, s, .47f + bonusV)));
 
-                _lines.Append(new Vertex(new Vector2f(-HalfSize.X + 1, HalfSize.Y - 3), new HSVColor(Hue, s, .47f + bonusV)));
-                _lines.Append(new Vertex(new Vector2f(-HalfSize.X + 1, -HalfSize.Y + 3), new HSVColor(Hue, s, .47f + bonusV)));
+                _lines.Append(new Vertex(new Vector2f(-HalfSize.X + 1, HalfSize.Y - 3), NewColor(Hue, s, .47f + bonusV)));
+                _lines.Append(new Vertex(new Vector2f(-HalfSize.X + 1, -HalfSize.Y + 3), NewColor(Hue, s, .47f + bonusV)));
 
-                _lines.Append(new Vertex(new Vector2f(-HalfSize.X + 1, -HalfSize.Y + 3), new HSVColor(Hue, s, .47f + bonusV)));
-                _lines.Append(new Vertex(new Vector2f(-HalfSize.X + 3, -HalfSize.Y + 1), new HSVColor(Hue, s, .47f + bonusV)));
+                _lines.Append(new Vertex(new Vector2f(-HalfSize.X + 1, -HalfSize.Y + 3), NewColor(Hue, s, .47f + bonusV)));
+                _lines.Append(new Vertex(new Vector2f(-HalfSize.X + 3, -HalfSize.Y + 1), NewColor(Hue, s, .47f + bonusV)));
             }
 
             #endregion light
@@ -260,71 +260,71 @@ namespace WGP.AzurUI
             if (Pressing)
             {
                 bonusV = Utilities.Interpolation(Utilities.Percent(_chronometer.ElapsedTime, threshold, threshold + increase), bonus0, actualBonus);
-                _lines.Append(new Vertex(new Vector2f(-HalfSize.X + 3, -HalfSize.Y), new HSVColor(Hue, s, .27f + bonusV)));
+                _lines.Append(new Vertex(new Vector2f(-HalfSize.X + 3, -HalfSize.Y), NewColor(Hue, s, .27f + bonusV)));
                 threshold += increase;
                 bonusV = Utilities.Interpolation(Utilities.Percent(_chronometer.ElapsedTime, threshold, threshold + increase), bonus0, actualBonus);
-                _lines.Append(new Vertex(new Vector2f(HalfSize.X - 3, -HalfSize.Y), new HSVColor(Hue, s, .27f + bonusV)));
+                _lines.Append(new Vertex(new Vector2f(HalfSize.X - 3, -HalfSize.Y), NewColor(Hue, s, .27f + bonusV)));
 
-                _lines.Append(new Vertex(new Vector2f(HalfSize.X - 3, -HalfSize.Y), new HSVColor(Hue, s, .27f + bonusV)));
+                _lines.Append(new Vertex(new Vector2f(HalfSize.X - 3, -HalfSize.Y), NewColor(Hue, s, .27f + bonusV)));
                 threshold += increase;
                 bonusV = Utilities.Interpolation(Utilities.Percent(_chronometer.ElapsedTime, threshold, threshold + increase), bonus0, actualBonus);
-                _lines.Append(new Vertex(new Vector2f(HalfSize.X, -HalfSize.Y + 3), new HSVColor(Hue, s, .27f + bonusV)));
+                _lines.Append(new Vertex(new Vector2f(HalfSize.X, -HalfSize.Y + 3), NewColor(Hue, s, .27f + bonusV)));
 
-                _lines.Append(new Vertex(new Vector2f(HalfSize.X, -HalfSize.Y + 3), new HSVColor(Hue, s, .27f + bonusV)));
+                _lines.Append(new Vertex(new Vector2f(HalfSize.X, -HalfSize.Y + 3), NewColor(Hue, s, .27f + bonusV)));
                 threshold += increase;
                 bonusV = Utilities.Interpolation(Utilities.Percent(_chronometer.ElapsedTime, threshold, threshold + increase), bonus0, actualBonus);
-                _lines.Append(new Vertex(new Vector2f(HalfSize.X, HalfSize.Y - 3), new HSVColor(Hue, s, .27f + bonusV)));
+                _lines.Append(new Vertex(new Vector2f(HalfSize.X, HalfSize.Y - 3), NewColor(Hue, s, .27f + bonusV)));
 
-                _lines.Append(new Vertex(new Vector2f(HalfSize.X, HalfSize.Y - 3), new HSVColor(Hue, s, .27f + bonusV)));
+                _lines.Append(new Vertex(new Vector2f(HalfSize.X, HalfSize.Y - 3), NewColor(Hue, s, .27f + bonusV)));
                 threshold += increase;
                 bonusV = Utilities.Interpolation(Utilities.Percent(_chronometer.ElapsedTime, threshold, threshold + increase), bonus0, actualBonus);
-                _lines.Append(new Vertex(new Vector2f(HalfSize.X - 3, HalfSize.Y), new HSVColor(Hue, s, .27f + bonusV)));
+                _lines.Append(new Vertex(new Vector2f(HalfSize.X - 3, HalfSize.Y), NewColor(Hue, s, .27f + bonusV)));
 
-                _lines.Append(new Vertex(new Vector2f(HalfSize.X - 3, HalfSize.Y), new HSVColor(Hue, s, .27f + bonusV)));
+                _lines.Append(new Vertex(new Vector2f(HalfSize.X - 3, HalfSize.Y), NewColor(Hue, s, .27f + bonusV)));
                 threshold += increase;
                 bonusV = Utilities.Interpolation(Utilities.Percent(_chronometer.ElapsedTime, threshold, threshold + increase), bonus0, actualBonus);
-                _lines.Append(new Vertex(new Vector2f(-HalfSize.X + 3, HalfSize.Y), new HSVColor(Hue, s, .27f + bonusV)));
+                _lines.Append(new Vertex(new Vector2f(-HalfSize.X + 3, HalfSize.Y), NewColor(Hue, s, .27f + bonusV)));
 
-                _lines.Append(new Vertex(new Vector2f(-HalfSize.X + 3, HalfSize.Y), new HSVColor(Hue, s, .27f + bonusV)));
+                _lines.Append(new Vertex(new Vector2f(-HalfSize.X + 3, HalfSize.Y), NewColor(Hue, s, .27f + bonusV)));
                 threshold += increase;
                 bonusV = Utilities.Interpolation(Utilities.Percent(_chronometer.ElapsedTime, threshold, threshold + increase), bonus0, actualBonus);
-                _lines.Append(new Vertex(new Vector2f(-HalfSize.X, HalfSize.Y - 3), new HSVColor(Hue, s, .27f + bonusV)));
+                _lines.Append(new Vertex(new Vector2f(-HalfSize.X, HalfSize.Y - 3), NewColor(Hue, s, .27f + bonusV)));
 
-                _lines.Append(new Vertex(new Vector2f(-HalfSize.X, HalfSize.Y - 3), new HSVColor(Hue, s, .27f + bonusV)));
+                _lines.Append(new Vertex(new Vector2f(-HalfSize.X, HalfSize.Y - 3), NewColor(Hue, s, .27f + bonusV)));
                 threshold += increase;
                 bonusV = Utilities.Interpolation(Utilities.Percent(_chronometer.ElapsedTime, threshold, threshold + increase), bonus0, actualBonus);
-                _lines.Append(new Vertex(new Vector2f(-HalfSize.X, -HalfSize.Y + 3), new HSVColor(Hue, s, .27f + bonusV)));
+                _lines.Append(new Vertex(new Vector2f(-HalfSize.X, -HalfSize.Y + 3), NewColor(Hue, s, .27f + bonusV)));
 
-                _lines.Append(new Vertex(new Vector2f(-HalfSize.X, -HalfSize.Y + 3), new HSVColor(Hue, s, .27f + bonusV)));
+                _lines.Append(new Vertex(new Vector2f(-HalfSize.X, -HalfSize.Y + 3), NewColor(Hue, s, .27f + bonusV)));
                 threshold += increase;
                 bonusV = Utilities.Interpolation(Utilities.Percent(_chronometer.ElapsedTime, threshold, threshold + increase), bonus0, actualBonus);
-                _lines.Append(new Vertex(new Vector2f(-HalfSize.X + 3, -HalfSize.Y), new HSVColor(Hue, s, .27f + bonusV)));
+                _lines.Append(new Vertex(new Vector2f(-HalfSize.X + 3, -HalfSize.Y), NewColor(Hue, s, .27f + bonusV)));
             }
             else
             {
-                _lines.Append(new Vertex(new Vector2f(-HalfSize.X + 3, -HalfSize.Y), new HSVColor(Hue, s, .27f + bonusV)));
-                _lines.Append(new Vertex(new Vector2f(HalfSize.X - 3, -HalfSize.Y), new HSVColor(Hue, s, .27f + bonusV)));
+                _lines.Append(new Vertex(new Vector2f(-HalfSize.X + 3, -HalfSize.Y), NewColor(Hue, s, .27f + bonusV)));
+                _lines.Append(new Vertex(new Vector2f(HalfSize.X - 3, -HalfSize.Y), NewColor(Hue, s, .27f + bonusV)));
 
-                _lines.Append(new Vertex(new Vector2f(HalfSize.X - 3, -HalfSize.Y), new HSVColor(Hue, s, .27f + bonusV)));
-                _lines.Append(new Vertex(new Vector2f(HalfSize.X, -HalfSize.Y + 3), new HSVColor(Hue, s, .27f + bonusV)));
+                _lines.Append(new Vertex(new Vector2f(HalfSize.X - 3, -HalfSize.Y), NewColor(Hue, s, .27f + bonusV)));
+                _lines.Append(new Vertex(new Vector2f(HalfSize.X, -HalfSize.Y + 3), NewColor(Hue, s, .27f + bonusV)));
 
-                _lines.Append(new Vertex(new Vector2f(HalfSize.X, -HalfSize.Y + 3), new HSVColor(Hue, s, .27f + bonusV)));
-                _lines.Append(new Vertex(new Vector2f(HalfSize.X, HalfSize.Y - 3), new HSVColor(Hue, s, .27f + bonusV)));
+                _lines.Append(new Vertex(new Vector2f(HalfSize.X, -HalfSize.Y + 3), NewColor(Hue, s, .27f + bonusV)));
+                _lines.Append(new Vertex(new Vector2f(HalfSize.X, HalfSize.Y - 3), NewColor(Hue, s, .27f + bonusV)));
 
-                _lines.Append(new Vertex(new Vector2f(HalfSize.X, HalfSize.Y - 3), new HSVColor(Hue, s, .27f + bonusV)));
-                _lines.Append(new Vertex(new Vector2f(HalfSize.X - 3, HalfSize.Y), new HSVColor(Hue, s, .27f + bonusV)));
+                _lines.Append(new Vertex(new Vector2f(HalfSize.X, HalfSize.Y - 3), NewColor(Hue, s, .27f + bonusV)));
+                _lines.Append(new Vertex(new Vector2f(HalfSize.X - 3, HalfSize.Y), NewColor(Hue, s, .27f + bonusV)));
 
-                _lines.Append(new Vertex(new Vector2f(HalfSize.X - 3, HalfSize.Y), new HSVColor(Hue, s, .27f + bonusV)));
-                _lines.Append(new Vertex(new Vector2f(-HalfSize.X + 3, HalfSize.Y), new HSVColor(Hue, s, .27f + bonusV)));
+                _lines.Append(new Vertex(new Vector2f(HalfSize.X - 3, HalfSize.Y), NewColor(Hue, s, .27f + bonusV)));
+                _lines.Append(new Vertex(new Vector2f(-HalfSize.X + 3, HalfSize.Y), NewColor(Hue, s, .27f + bonusV)));
 
-                _lines.Append(new Vertex(new Vector2f(-HalfSize.X + 3, HalfSize.Y), new HSVColor(Hue, s, .27f + bonusV)));
-                _lines.Append(new Vertex(new Vector2f(-HalfSize.X, HalfSize.Y - 3), new HSVColor(Hue, s, .27f + bonusV)));
+                _lines.Append(new Vertex(new Vector2f(-HalfSize.X + 3, HalfSize.Y), NewColor(Hue, s, .27f + bonusV)));
+                _lines.Append(new Vertex(new Vector2f(-HalfSize.X, HalfSize.Y - 3), NewColor(Hue, s, .27f + bonusV)));
 
-                _lines.Append(new Vertex(new Vector2f(-HalfSize.X, HalfSize.Y - 3), new HSVColor(Hue, s, .27f + bonusV)));
-                _lines.Append(new Vertex(new Vector2f(-HalfSize.X, -HalfSize.Y + 3), new HSVColor(Hue, s, .27f + bonusV)));
+                _lines.Append(new Vertex(new Vector2f(-HalfSize.X, HalfSize.Y - 3), NewColor(Hue, s, .27f + bonusV)));
+                _lines.Append(new Vertex(new Vector2f(-HalfSize.X, -HalfSize.Y + 3), NewColor(Hue, s, .27f + bonusV)));
 
-                _lines.Append(new Vertex(new Vector2f(-HalfSize.X, -HalfSize.Y + 3), new HSVColor(Hue, s, .27f + bonusV)));
-                _lines.Append(new Vertex(new Vector2f(-HalfSize.X + 3, -HalfSize.Y), new HSVColor(Hue, s, .27f + bonusV)));
+                _lines.Append(new Vertex(new Vector2f(-HalfSize.X, -HalfSize.Y + 3), NewColor(Hue, s, .27f + bonusV)));
+                _lines.Append(new Vertex(new Vector2f(-HalfSize.X + 3, -HalfSize.Y), NewColor(Hue, s, .27f + bonusV)));
             }
 
             #endregion dark

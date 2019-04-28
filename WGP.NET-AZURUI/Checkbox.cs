@@ -195,7 +195,7 @@ namespace WGP.AzurUI
             _lines.Clear();
             _gradient.Clear();
             _outerLight.Clear();
-            var outlineColor = new HSVColor(Hue, .36f, .6f);
+            var outlineColor = NewColor(Hue, .36f, .6f);
             if (Hovered)
                 outlineColor.V = Utilities.Interpolation(Utilities.Percent(_chronometer.ElapsedTime, Time.Zero, Time.FromSeconds(.5f)), .6f, .8f);
             if (Pressing)
@@ -227,9 +227,9 @@ namespace WGP.AzurUI
                     bonusA = (byte)(.1f * 255);
                     S = .5f;
                 }
-                _gradient.Append(new Vertex(new Vector2f(9, 9), new HSVColor(Hue, S, .5f + bonusV, bonusA)));
+                _gradient.Append(new Vertex(new Vector2f(9, 9), NewColor(Hue, S, .5f + bonusV, bonusA)));
                 for (int i = 0; i <= 30; i++)
-                    _gradient.Append(new Vertex(new Vector2f(9, 9) + (Angle.Loop * i / 30).GenerateVector(9), new HSVColor(Hue, S, .5f + bonusV, (byte)(128 + bonusA))));
+                    _gradient.Append(new Vertex(new Vector2f(9, 9) + (Angle.Loop * i / 30).GenerateVector(9), NewColor(Hue, S, .5f + bonusV, (byte)(128 + bonusA))));
             }
             {
                 byte A = 0;
@@ -237,8 +237,8 @@ namespace WGP.AzurUI
                     A = (byte)Utilities.Interpolation(Utilities.Percent(_chronometer.ElapsedTime, Time.Zero, Time.FromSeconds(1f)), 0f, 255f);
                 for (int i = 0; i <= 30; i++)
                 {
-                    _outerLight.Append(new Vertex(new Vector2f(9, 9) + (Angle.Loop * i / 30).GenerateVector(9), new HSVColor(Hue, .75f, 1, A)));
-                    _outerLight.Append(new Vertex(new Vector2f(9, 9) + (Angle.Loop * i / 30).GenerateVector(15), new HSVColor(Hue, .75f, 1, 0)));
+                    _outerLight.Append(new Vertex(new Vector2f(9, 9) + (Angle.Loop * i / 30).GenerateVector(9), NewColor(Hue, .75f, 1, A)));
+                    _outerLight.Append(new Vertex(new Vector2f(9, 9) + (Angle.Loop * i / 30).GenerateVector(15), NewColor(Hue, .75f, 1, 0)));
                 }
             }
             if (CurrentState == State.CHECKED)
@@ -251,20 +251,20 @@ namespace WGP.AzurUI
                 _lines.Append(new Vertex(center + new Vector2f(5, -2), Color.White));
 
                 //outline
-                _lines.Append(new Vertex(center + new Vector2f(-4, 0), new HSVColor(Hue, .35f, 1)));
-                _lines.Append(new Vertex(center + new Vector2f(-1, 3), new HSVColor(Hue, .35f, 1)));
+                _lines.Append(new Vertex(center + new Vector2f(-4, 0), NewColor(Hue, .35f, 1)));
+                _lines.Append(new Vertex(center + new Vector2f(-1, 3), NewColor(Hue, .35f, 1)));
 
-                _lines.Append(new Vertex(center + new Vector2f(-1, 3), new HSVColor(Hue, .35f, 1)));
-                _lines.Append(new Vertex(center + new Vector2f(5, -3), new HSVColor(Hue, .35f, 1)));
+                _lines.Append(new Vertex(center + new Vector2f(-1, 3), NewColor(Hue, .35f, 1)));
+                _lines.Append(new Vertex(center + new Vector2f(5, -3), NewColor(Hue, .35f, 1)));
 
-                _lines.Append(new Vertex(center + new Vector2f(5, -3), new HSVColor(Hue, .35f, 1)));
-                _lines.Append(new Vertex(center + new Vector2f(6, -2), new HSVColor(Hue, .35f, 1)));
+                _lines.Append(new Vertex(center + new Vector2f(5, -3), NewColor(Hue, .35f, 1)));
+                _lines.Append(new Vertex(center + new Vector2f(6, -2), NewColor(Hue, .35f, 1)));
 
-                _lines.Append(new Vertex(center + new Vector2f(6, -2), new HSVColor(Hue, .35f, 1)));
-                _lines.Append(new Vertex(center + new Vector2f(-1, 5), new HSVColor(Hue, .35f, 1)));
+                _lines.Append(new Vertex(center + new Vector2f(6, -2), NewColor(Hue, .35f, 1)));
+                _lines.Append(new Vertex(center + new Vector2f(-1, 5), NewColor(Hue, .35f, 1)));
 
-                _lines.Append(new Vertex(center + new Vector2f(-1, 5), new HSVColor(Hue, .35f, 1)));
-                _lines.Append(new Vertex(center + new Vector2f(-5, 1), new HSVColor(Hue, .35f, 1)));
+                _lines.Append(new Vertex(center + new Vector2f(-1, 5), NewColor(Hue, .35f, 1)));
+                _lines.Append(new Vertex(center + new Vector2f(-5, 1), NewColor(Hue, .35f, 1)));
             }
             else if (CurrentState == State.INDETERMINATE)
             {
@@ -273,16 +273,17 @@ namespace WGP.AzurUI
                 _lines.Append(new Vertex(center + new Vector2f(7, 1), Color.White));
 
                 //outline
-                _lines.Append(new Vertex(center + new Vector2f(6, 0), new HSVColor(Hue, .35f, 1)));
+                _lines.Append(new Vertex(center + new Vector2f(-4, 0), NewColor(Hue, .35f, 1)));
+                _lines.Append(new Vertex(center + new Vector2f(6, 0), NewColor(Hue, .35f, 1)));
 
-                _lines.Append(new Vertex(center + new Vector2f(6, 0), new HSVColor(Hue, .35f, 1)));
-                _lines.Append(new Vertex(center + new Vector2f(7, 1), new HSVColor(Hue, .35f, 1)));
+                _lines.Append(new Vertex(center + new Vector2f(6, 0), NewColor(Hue, .35f, 1)));
+                _lines.Append(new Vertex(center + new Vector2f(7, 1), NewColor(Hue, .35f, 1)));
 
-                _lines.Append(new Vertex(center + new Vector2f(6, 2), new HSVColor(Hue, .35f, 1)));
-                _lines.Append(new Vertex(center + new Vector2f(-4, 2), new HSVColor(Hue, .35f, 1)));
+                _lines.Append(new Vertex(center + new Vector2f(6, 2), NewColor(Hue, .35f, 1)));
+                _lines.Append(new Vertex(center + new Vector2f(-4, 2), NewColor(Hue, .35f, 1)));
 
-                _lines.Append(new Vertex(center + new Vector2f(-5, 1), new HSVColor(Hue, .35f, 1)));
-                _lines.Append(new Vertex(center + new Vector2f(-4, 0), new HSVColor(Hue, .35f, 1)));
+                _lines.Append(new Vertex(center + new Vector2f(-5, 1), NewColor(Hue, .35f, 1)));
+                _lines.Append(new Vertex(center + new Vector2f(-4, 0), NewColor(Hue, .35f, 1)));
             }
         }
 
