@@ -2,7 +2,9 @@
 
 ### **Still in work**
 
-Set of GUI widgets like [WGP.NET-GUI](https://github.com/WildGoat07/WGP.NET-GUI), but with better looking theme and animations, custom hue and no auto scaling (better integration in fully SFML interfaces)
+Set of GUI widgets like [WGP.NET-GUI](https://github.com/WildGoat07/WGP.NET-GUI), but with better looking theme and animations, custom hue and no auto scaling (better integration in fully SFML interfaces).
+
+Will mostly be adapted to WinForms if I have the will and the knowledge.
 
 Provides some utility methods and some extension methods.
 
