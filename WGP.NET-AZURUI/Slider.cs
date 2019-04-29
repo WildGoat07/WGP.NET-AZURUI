@@ -95,7 +95,7 @@ namespace WGP.AzurUI
             DoublePad = false;
             Minimum = 0;
             Maximum = 100;
-            Range = Tuple.Create(0f, 0f);
+            Range = new Interval<float>(0f, 0f);
             TickConfig = TickType.DEFAULT;
             Step = 0;
         }
@@ -274,13 +274,13 @@ namespace WGP.AzurUI
         /// <summary>
         /// Range value of the double pad slider.
         /// </summary>
-        public Tuple<float, float> Range
+        public Interval<float> Range
         {
-            get => Tuple.Create(Utilities.Min(_value1, _value2), Utilities.Max(_value1, _value2));
+            get => new Interval<float>(_value1, _value2);
             set
             {
-                _value1 = value.Item1.Capped(Minimum, Maximum);
-                _value2 = value.Item2.Capped(Minimum, Maximum);
+                _value1 = value.Minimum.Capped(Minimum, Maximum);
+                _value2 = value.Minimum.Capped(Minimum, Maximum);
             }
         }
 
