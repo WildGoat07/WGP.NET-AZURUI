@@ -95,6 +95,7 @@ namespace WGP.AzurUI
             DoublePad = false;
             Minimum = 0;
             Maximum = 100;
+            Size = 100;
             Range = new Interval<float>(0f, 0f);
             TickConfig = TickType.DEFAULT;
             Step = 0;
