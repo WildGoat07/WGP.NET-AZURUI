@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SFML.Graphics;
+using SFML.System;
 
 namespace WGP.AzurUI
 {
@@ -74,5 +75,16 @@ namespace WGP.AzurUI
         }
 
         #endregion Public Methods
+
+        #region Internal Methods
+
+        internal virtual void DrawOn(RenderTarget target, Vector2f offset)
+        {
+            Transform tr = Transform.Identity;
+            tr.Translate(Position + offset);
+            target.Draw(_display, new RenderStates(tr));
+        }
+
+        #endregion Internal Methods
     }
 }
