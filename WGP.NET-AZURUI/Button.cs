@@ -27,11 +27,6 @@ namespace WGP.AzurUI
         /// </summary>
         protected VertexArray _lines;
 
-        /// <summary>
-        /// The text displayed.
-        /// </summary>
-        protected Text _text;
-
         #endregion Protected Fields
 
         #region Private Fields
@@ -47,8 +42,7 @@ namespace WGP.AzurUI
         /// </summary>
         public Button() : base()
         {
-            _text = new Text("", Engine.BaseFont, Engine.CharacterSize);
-            _text.FillColor = Engine.BaseFontColor;
+            Text = new Label();
             _lines = new VertexArray(PrimitiveType.Lines);
             _gradient = new VertexArray(PrimitiveType.Quads);
             Pressing = false;
@@ -87,9 +81,9 @@ namespace WGP.AzurUI
         public bool Pressing { get; protected set; }
 
         /// <summary>
-        /// The text of the button.
+        /// The text displayed.
         /// </summary>
-        public string Text { get; set; }
+        public Label Text { get; set; }
 
         #endregion Public Properties
 
@@ -106,7 +100,7 @@ namespace WGP.AzurUI
             tr.Translate(Position);
             target.Draw(_gradient, new RenderStates(tr));
             target.Draw(_lines, new RenderStates(tr));
-            target.Draw(_text, new RenderStates(tr));
+            Text?.DrawOn(target, Position);
         }
 
         /// <summary>
@@ -149,8 +143,8 @@ namespace WGP.AzurUI
                 s = .6f;
                 bonusV = .4f;
             }
-            _text.DisplayedString = Text;
-            _text.Origin = (Vector2f)((Vector2i)(_text.GetGlobalBounds().Size() / 2)) + new Vector2f(0, _text.GetLocalBounds().Top);
+            if (Text != null)
+                Text.Position = -(Vector2f)(Vector2i)(Text.GlobalBounds.Size() / 2);
             _gradient.Clear();
             if (Pressing)
             {
