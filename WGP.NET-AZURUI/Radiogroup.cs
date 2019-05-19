@@ -23,19 +23,9 @@ namespace WGP.AzurUI
         protected VertexArray _gradient;
 
         /// <summary>
-        /// Internal list of the items.
-        /// </summary>
-        protected ObservableCollection<object> _items;
-
-        /// <summary>
         /// Vertice used for the lines.
         /// </summary>
         protected VertexArray _lines;
-
-        /// <summary>
-        /// List of the texts to display.
-        /// </summary>
-        protected List<Text> _texts;
 
         /// <summary>
         /// Chronometer for the pad moving animation.
@@ -50,7 +40,6 @@ namespace WGP.AzurUI
         private float currPadPos;
         private bool oldMouseState;
         private float oldPadPos;
-        private bool requireUpdate;
 
         #endregion Private Fields
 
@@ -65,12 +54,16 @@ namespace WGP.AzurUI
             _selectedIndex = -1;
             PressingOn = -1;
             HoveredOn = -1;
-            requireUpdate = false;
             _gradient = new VertexArray(PrimitiveType.Quads);
-            _items = new ObservableCollection<object>();
-            _items.CollectionChanged += (sender, e) => UpdateTexts();
+            _items = new ObservableCollection<Label>();
+            _items.CollectionChanged += (sender, ev) =>
+            {
+                if (ev.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add && ev.NewItems.Contains(null))
+                    throw new ArgumentNullException("A radio label can't be set to null");
+                if (ev.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Replace && ev.NewItems.Contains(null))
+                    throw new ArgumentNullException("A radio label can't be set to null");
+            };
             _lines = new VertexArray(PrimitiveType.Lines);
-            _texts = new List<Text>();
         }
 
         #endregion Public Constructors
@@ -85,12 +78,25 @@ namespace WGP.AzurUI
         /// <summary>
         /// Items of the radiogroup.
         /// </summary>
-        public Collection<object> Items => _items;
+        public Collection<Label> Items => _items;
 
         /// <summary>
         /// The AABB of the widget without its position.
         /// </summary>
-        public override FloatRect LocalBounds => new FloatRect(0, 0, Utilities.Max(_texts.ConvertAll((t) => t.GetGlobalBounds().Width)) + 10, Items.Count * Engine.CharacterSize);
+        public override FloatRect LocalBounds
+        {
+            get
+            {
+                var result = new FloatRect();
+                foreach (var item in Items)
+                {
+                    result.Width = Utilities.Max(result.Width, item.GlobalBounds.Width);
+                    result.Height += item.GlobalBounds.Height;
+                }
+                result.Width += 10;
+                return result;
+            }
+        }
 
         /// <summary>
         /// Index of the item on which the mouse is clicking. -1 if no item is being clicked.
@@ -118,25 +124,20 @@ namespace WGP.AzurUI
         }
 
         /// <summary>
-        /// The currently selected item.
-        /// </summary>
-        public object SelectedItem
-        {
-            get => Items[SelectedIndex];
-            set
-            {
-                var index = Items.IndexOf(value);
-                if (index != -1)
-                    SelectedIndex = index;
-            }
-        }
-
-        /// <summary>
         /// Triggered when the selection has changed.
         /// </summary>
         public Action SelectionChanged { get; set; }
 
         #endregion Public Properties
+
+        #region Protected Properties
+
+        /// <summary>
+        /// Items of the radiogroup.
+        /// </summary>
+        protected ObservableCollection<Label> _items { get; set; }
+
+        #endregion Protected Properties
 
         #region Public Methods
 
@@ -151,8 +152,8 @@ namespace WGP.AzurUI
             tr.Translate(Position);
             target.Draw(_gradient, new RenderStates(tr));
             target.Draw(_lines, new RenderStates(tr));
-            foreach (var text in _texts)
-                target.Draw(text, new RenderStates(tr));
+            foreach (var text in Items)
+                text?.DrawOn(target, Position);
         }
 
         /// <summary>
@@ -161,8 +162,6 @@ namespace WGP.AzurUI
         /// <param name="app">Windows on which the widget is DIRECTLY drawn on.</param>
         public override void Update(RenderWindow app)
         {
-            if (requireUpdate)
-                UpdateTexts();
             _gradient.Clear();
             _lines.Clear();
             int oldHover = HoveredOn;
@@ -170,9 +169,9 @@ namespace WGP.AzurUI
             HoveredOn = -1;
             for (int i = 0; i < Items.Count; i++)
             {
-                var msRelativePos = app.MapPixelToCoords(Mouse.GetPosition(app)) - Position;
-                var box = new FloatRect(0, i * Engine.CharacterSize, 10 + _texts[i].GetLocalBounds().Width, Engine.CharacterSize);
-                if (box.Contains(msRelativePos))
+                var msPos = app.MapPixelToCoords(Mouse.GetPosition(app)) - Position;
+                var box = Items[i].GlobalBounds;
+                if (box.Contains(msPos))
                     HoveredOn = i;
             }
             for (int i = 0; i < Items.Count; i++)
@@ -200,17 +199,17 @@ namespace WGP.AzurUI
             }
             if (Items.Count > 0)
             {
-                currPadPos = (int)Utilities.Interpolation(Utilities.Percent(PadChrono.ElapsedTime, Time.Zero, Time.FromSeconds(.5f)), oldPadPos, (SelectedIndex * Engine.CharacterSize));
+                currPadPos = (int)Utilities.Interpolation(Utilities.Percent(PadChrono.ElapsedTime, Time.Zero, Time.FromSeconds(.5f)), oldPadPos, Items[SelectedIndex].Position.Y);
                 _lines.Append(new Vertex(new Vector2f(0, 0), NewColor(Hue, .3f, .5f)));
                 _lines.Append(new Vertex(new Vector2f(6, 0), NewColor(Hue, .3f, .5f)));
 
                 _lines.Append(new Vertex(new Vector2f(7, 0), NewColor(Hue, .3f, .5f)));
-                _lines.Append(new Vertex(new Vector2f(7, Engine.CharacterSize * Items.Count), NewColor(Hue, .3f, .5f)));
+                _lines.Append(new Vertex(new Vector2f(7, LocalBounds.Height), NewColor(Hue, .3f, .5f)));
 
-                _lines.Append(new Vertex(new Vector2f(6, Engine.CharacterSize * Items.Count + 1), NewColor(Hue, .3f, .5f)));
-                _lines.Append(new Vertex(new Vector2f(0, Engine.CharacterSize * Items.Count + 1), NewColor(Hue, .3f, .5f)));
+                _lines.Append(new Vertex(new Vector2f(6, LocalBounds.Height + 1), NewColor(Hue, .3f, .5f)));
+                _lines.Append(new Vertex(new Vector2f(0, LocalBounds.Height + 1), NewColor(Hue, .3f, .5f)));
 
-                _lines.Append(new Vertex(new Vector2f(0, Engine.CharacterSize * Items.Count), NewColor(Hue, .3f, .5f)));
+                _lines.Append(new Vertex(new Vector2f(0, LocalBounds.Height), NewColor(Hue, .3f, .5f)));
                 _lines.Append(new Vertex(new Vector2f(0, 0), NewColor(Hue, .3f, .5f)));
 
                 if (HoveredOn != -1)
@@ -229,13 +228,13 @@ namespace WGP.AzurUI
                     }
                     _gradient.Append(new Vertex(new Vector2f(0, 0), NewColor(Hue, S, .75f, A)));
                     _gradient.Append(new Vertex(new Vector2f(6, 0), NewColor(Hue, S, .75f, A)));
-                    _gradient.Append(new Vertex(new Vector2f(6, Engine.CharacterSize * Items.Count), NewColor(Hue, S, .75f, A)));
-                    _gradient.Append(new Vertex(new Vector2f(0, Engine.CharacterSize * Items.Count), NewColor(Hue, S, .75f, A)));
+                    _gradient.Append(new Vertex(new Vector2f(6, LocalBounds.Height), NewColor(Hue, S, .75f, A)));
+                    _gradient.Append(new Vertex(new Vector2f(0, LocalBounds.Height), NewColor(Hue, S, .75f, A)));
                     S = Utilities.Min(S, .5f);
-                    _gradient.Append(new Vertex(new Vector2f(10, Engine.CharacterSize * HoveredOn), NewColor(Hue, S + .25f, .75f, (byte)Utilities.Min(255, A * 4))));
-                    _gradient.Append(new Vertex(new Vector2f(10 + _texts[HoveredOn].GetGlobalBounds().Width, Engine.CharacterSize * HoveredOn), NewColor(Hue, S + .25f, .75f, 0)));
-                    _gradient.Append(new Vertex(new Vector2f(10 + _texts[HoveredOn].GetGlobalBounds().Width, Engine.CharacterSize * (HoveredOn + 1)), NewColor(Hue, S + .25f, .75f, 0)));
-                    _gradient.Append(new Vertex(new Vector2f(10, Engine.CharacterSize * (HoveredOn + 1)), NewColor(Hue, S + .25f, .75f, (byte)Utilities.Min(255, A * 4))));
+                    _gradient.Append(new Vertex(new Vector2f(10, Items[HoveredOn].Position.Y), NewColor(Hue, S + .25f, .75f, (byte)Utilities.Min(255, A * 4))));
+                    _gradient.Append(new Vertex(new Vector2f(10 + Items[HoveredOn].GlobalBounds.Width, Items[HoveredOn].Position.Y), NewColor(Hue, S + .25f, .75f, 0)));
+                    _gradient.Append(new Vertex(new Vector2f(10 + Items[HoveredOn].GlobalBounds.Width, Items[HoveredOn].GlobalBounds.Bot()), NewColor(Hue, S + .25f, .75f, 0)));
+                    _gradient.Append(new Vertex(new Vector2f(10, Items[HoveredOn].GlobalBounds.Bot()), NewColor(Hue, S + .25f, .75f, (byte)Utilities.Min(255, A * 4))));
                 }
 
                 if (SelectedIndex != -1)
@@ -270,31 +269,18 @@ namespace WGP.AzurUI
                     _gradient.Append(new Vertex(new Vector2f(6, 11 + currPadPos), NewColor(Hue, .75f, .75f)));
                     _gradient.Append(new Vertex(new Vector2f(6, lowBorder), NewColor(Hue, .75f, .75f, lowAlpha)));
                     _gradient.Append(new Vertex(new Vector2f(0, lowBorder), NewColor(Hue, .75f, .75f, lowAlpha)));
+
+                    int decal = 0;
+                    foreach (var item in Items)
+                    {
+                        item.Update(app);
+                        item.Position = new Vector2f(10, decal);
+                        decal += (int)item.GlobalBounds.Height;
+                    }
                 }
             }
         }
 
         #endregion Public Methods
-
-        #region Private Methods
-
-        private void UpdateTexts()
-        {
-            requireUpdate = false;
-            _texts.Clear();
-            int decal = 0;
-            foreach (var item in _items)
-            {
-                var tmp = new Text(item.ToString(), Engine.BaseFont, Engine.CharacterSize)
-                {
-                    FillColor = Engine.BaseFontColor,
-                    Position = new Vector2f(10, decal * Engine.CharacterSize)
-                };
-                _texts.Add(tmp);
-                decal++;
-            }
-        }
-
-        #endregion Private Methods
     }
 }
