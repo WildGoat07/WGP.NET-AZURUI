@@ -58,6 +58,8 @@ namespace WGP.AzurUI
 
         #region Public Methods
 
+        public static implicit operator Label(string str) => new Label(str);
+
         public override void DrawOn(RenderTarget target)
         {
             Transform tr = Transform.Identity;
