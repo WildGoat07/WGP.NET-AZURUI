@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using WGP;
 using SFML.System;
 using SFML.Graphics;
+using System.Net;
 
 namespace WGP.AzurUI
 {
@@ -17,12 +18,10 @@ namespace WGP.AzurUI
         #region Internal Fields
 
         internal static Font BaseFont;
-
         internal static Color BaseFontColor;
-
         internal static uint CharacterSize;
-
         internal static Chronometer Chronometer;
+        internal static WebClient Client;
 
         #endregion Internal Fields
 
@@ -67,6 +66,7 @@ namespace WGP.AzurUI
         /// </summary>
         public static void Initialize()
         {
+            Client = new WebClient();
             BaseFont = new Font(Properties.Resources.tahoma);
             CharacterSize = 12;
             BaseFontColor = new Color(230, 230, 230);
