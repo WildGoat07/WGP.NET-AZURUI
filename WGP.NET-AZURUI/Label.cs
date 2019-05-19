@@ -67,6 +67,8 @@ namespace WGP.AzurUI
             target.Draw(_display, new RenderStates(tr));
         }
 
+        public override string ToString() => _display.DisplayedString;
+
         public override void Update(RenderWindow app)
         {
         }
