@@ -54,7 +54,7 @@ namespace WGP.AzurUI
             oldPerc = Utilities.Interpolation(Utilities.Percent(_chronometer.ElapsedTime, Time.Zero, AnimDuration), oldPerc, PercentFilled);
             if (EnableAnimation)
                 _chronometer.Restart();
-            AnimDuration = Utilities.Interpolation((percent - PercentFilled).Abs(), Time.Zero, Time.FromSeconds(.25f) * Size / 100);
+            AnimDuration = Utilities.Interpolation((percent - PercentFilled).Abs(), Time.Zero, Time.FromSeconds(1f));
             PercentFilled = percent.Capped(0, 1);
         }
 
