@@ -32,16 +32,12 @@ namespace WGP.AzurUI
         /// </summary>
         protected VertexArray _outerLight;
 
-        /// <summary>
-        /// The text displayed.
-        /// </summary>
-        protected Text _text;
-
         #endregion Protected Fields
 
         #region Private Fields
 
         private State _currentState;
+
         private bool oldMouseState;
 
         #endregion Private Fields
@@ -56,8 +52,7 @@ namespace WGP.AzurUI
             _gradient = new VertexArray(PrimitiveType.TriangleFan);
             _outerLight = new VertexArray(PrimitiveType.TriangleStrip);
             _lines = new VertexArray(PrimitiveType.Lines);
-            _text = new Text("", Engine.BaseFont, Engine.CharacterSize);
-            _text.FillColor = Engine.BaseFontColor;
+            Text = new Label();
             Pressing = false;
             Hovered = false;
             oldMouseState = false;
@@ -124,7 +119,13 @@ namespace WGP.AzurUI
         /// <summary>
         /// The AABB of the widget without its position.
         /// </summary>
-        public override FloatRect LocalBounds => new FloatRect(0, 0, 20 + _text.GetGlobalBounds().Width, 18);
+        public override FloatRect LocalBounds
+        {
+            get
+            {
+                return Text == null ? Utilities.CreateRect(new Vector2f(), new Vector2f(18, 18)) : Utilities.CreateRect(new Vector2f(), new Vector2f(18, 18), Text.GlobalBounds.TopLeft(), Text.GlobalBounds.BotRight());
+            }
+        }
 
         /// <summary>
         /// True if the mouse is clicking the checkbox.
@@ -137,9 +138,9 @@ namespace WGP.AzurUI
         public Action StateChanged { get; set; }
 
         /// <summary>
-        /// Text of the checkbox.
+        /// The text displayed.
         /// </summary>
-        public string Text { get; set; }
+        public Label Text { get; set; }
 
         #endregion Public Properties
 
@@ -157,7 +158,7 @@ namespace WGP.AzurUI
             target.Draw(_gradient, new RenderStates(tr));
             target.Draw(_outerLight, new RenderStates(tr));
             target.Draw(_lines, new RenderStates(tr));
-            target.Draw(_text, new RenderStates(tr));
+            Text?.DrawOn(target, Position);
         }
 
         /// <summary>
@@ -189,9 +190,8 @@ namespace WGP.AzurUI
                 Pressing = false;
             }
 
-            _text.DisplayedString = Text;
-            _text.Origin = (Vector2f)new Vector2i(0, (int)_text.GetLocalBounds().Top);
-            _text.Position = new Vector2f(20, (20 - Engine.CharacterSize) / 2);
+            if (Text != null)
+                Text.Position = new Vector2f(20, 9 - Text.GlobalBounds.Height / 2);
             _lines.Clear();
             _gradient.Clear();
             _outerLight.Clear();
