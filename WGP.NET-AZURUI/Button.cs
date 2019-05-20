@@ -144,7 +144,10 @@ namespace WGP.AzurUI
                 bonusV = .4f;
             }
             if (Text != null)
+            {
                 Text.Position = -(Vector2f)(Vector2i)(Text.GlobalBounds.Size() / 2);
+                Text.Update(app, Position);
+            }
             _gradient.Clear();
             if (Pressing)
             {

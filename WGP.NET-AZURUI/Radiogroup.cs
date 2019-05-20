@@ -162,6 +162,8 @@ namespace WGP.AzurUI
         /// <param name="app">Windows on which the widget is DIRECTLY drawn on.</param>
         public override void Update(RenderWindow app)
         {
+            foreach (var item in _items)
+                item.Update(app, Position);
             _gradient.Clear();
             _lines.Clear();
             int oldHover = HoveredOn;

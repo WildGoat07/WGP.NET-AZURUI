@@ -70,9 +70,7 @@ namespace WGP.AzurUI
 
         public override string ToString() => _display.DisplayedString;
 
-        public override void Update(RenderWindow app)
-        {
-        }
+        public sealed override void Update(RenderWindow app) => Update(app, new Vector2f());
 
         #endregion Public Methods
 
@@ -83,6 +81,10 @@ namespace WGP.AzurUI
             Transform tr = Transform.Identity;
             tr.Translate(Position + offset);
             target.Draw(_display, new RenderStates(tr));
+        }
+
+        internal virtual void Update(RenderWindow app, Vector2f offset)
+        {
         }
 
         #endregion Internal Methods

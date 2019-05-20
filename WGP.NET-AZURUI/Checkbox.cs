@@ -191,7 +191,10 @@ namespace WGP.AzurUI
             }
 
             if (Text != null)
+            {
                 Text.Position = new Vector2f(20, 9 - Text.GlobalBounds.Height / 2);
+                Text.Update(app, Position);
+            }
             _lines.Clear();
             _gradient.Clear();
             _outerLight.Clear();
