@@ -22,7 +22,7 @@ namespace WGP.AzurUI
 
         #region Public Constructors
 
-        public Progressbar()
+        public Progressbar() : base()
         {
             Gradient = new VertexArray(PrimitiveType.Quads);
             Light = new VertexArray(PrimitiveType.TriangleFan);

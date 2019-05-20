@@ -26,7 +26,7 @@ namespace WGP.AzurUI
         /// Constructor.
         /// </summary>
         /// <param name="text">Displayed text.</param>
-        public Label(string text = "")
+        public Label(string text = "") : base()
         {
             _display = new Text(text, Engine.BaseFont, Engine.CharacterSize);
             _display.FillColor = Engine.BaseFontColor;

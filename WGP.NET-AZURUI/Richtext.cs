@@ -37,7 +37,7 @@ namespace WGP.AzurUI
         /// Constructor.
         /// </summary>
         /// <param name="text">Markdown formatted text.</param>
-        public Richtext(string text = "")
+        public Richtext(string text = "") : base(text)
         {
             Text = text;
             _texts = new List<Text>();
