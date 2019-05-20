@@ -15,8 +15,6 @@ namespace WGP.AzurUI
     {
         #region Private Fields
 
-        private Chronometer _gifChrono;
-
         private VertexArray _lines;
 
         private bool _requireUpdate;
@@ -44,7 +42,6 @@ namespace WGP.AzurUI
             _lines = new VertexArray(PrimitiveType.Lines);
             _sprites = new List<Tuple<Sprite, int>>();
             _textures = new List<Tuple<List<Texture>, int>>();
-            _gifChrono = new Chronometer();
         }
 
         #endregion Public Constructors
@@ -61,18 +58,15 @@ namespace WGP.AzurUI
         /// </summary>
         public new float Hue { get => base.Hue; set => base.Hue = value; }
 
-        public override FloatRect LocalBounds => base.LocalBounds;
-
         /// <summary>
-        /// Maximum width of the widget, it will try to wrap its content.
+        /// Maximum width of the widget, it will try to wrap its content. 0 for no maximum width.
         /// </summary>
         public float MaxWidth { get; set; }
 
         /// <summary>
         /// Formatted text.
         /// </summary>
-        /// The formatting is based on Markdown, currently supported : headlines, emphasis, ordered
-        /// and unordered lists, links, image links, horizontal lines
+        /// The formatting is based on Markdown.
         public override string Text { get => _text; set { _text = value; _requireUpdate = true; } }
 
         #endregion Public Properties
@@ -90,47 +84,7 @@ namespace WGP.AzurUI
                 target.Draw(item.Item1, new RenderStates(tr));
         }
 
-        public override string ToString() => Text;
-
-        public override void Update(RenderWindow app)
-        {
-            base.Update(app);
-            if (_requireUpdate)
-            {
-                _requireUpdate = false;
-                bool end = false;
-                Vector2f offset = new Vector2f();
-                int index = 0;
-                while (!end)
-                {
-                    bool endLine = false;
-                    while (!endLine)
-                    {
-                        char curr = _text[index];
-                        if (curr == '#')
-                        {
-                            int headlineLevel = 1;
-                            bool parsing = true;
-                            while (parsing)
-                            {
-                                index++;
-                                curr = _text[index];
-                                if (curr == ' ')
-                                    parsing = false;
-                                else if (curr == '#' && headlineLevel < 6)
-                                    headlineLevel++;
-                                else
-                                {
-                                    parsing = false;
-                                    headlineLevel = 0;
-                                }
-                            }
-                        }
-                    }
-                }
-                _gifChrono.Restart();
-            }
-        }
+        public override string ToString() => _text;
 
         #endregion Public Methods
 
@@ -147,40 +101,16 @@ namespace WGP.AzurUI
                 target.Draw(item.Item1, new RenderStates(tr));
         }
 
-        #endregion Internal Methods
-
-        #region Private Classes
-
-        private class Modifier
+        internal override void Update(RenderWindow app, Vector2f offset)
         {
-            #region Public Fields
-
-            public Type ModifierType;
-
-            public dynamic Options;
-
-            #endregion Public Fields
-
-            #region Public Enums
-
-            public enum Type
+            base.Update(app, offset);
+            if (_requireUpdate)
             {
-                HEADLINE,
-                BOLD,
-                ITALIC,
-                STRIKETHROUGH,
-                OREDERED_LIST,
-                UNORDERED_LIST,
-                LINK,
-                REF,
-                IMAGE,
-                HORIZONTAL_LINE,
-                PARAGRAPH
+                _requireUpdate = false;
+                _chronometer.Restart();
             }
-
-            #endregion Public Enums
         }
 
-        #endregion Private Classes
+        #endregion Internal Methods
     }
 }
