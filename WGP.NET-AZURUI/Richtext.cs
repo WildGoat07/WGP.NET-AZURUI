@@ -56,7 +56,15 @@ namespace WGP.AzurUI
         /// <summary>
         /// Hue of the links.
         /// </summary>
-        public new float Hue { get => base.Hue; set => base.Hue = value; }
+        public override float Hue
+        {
+            get => base.Hue;
+            set
+            {
+                base.Hue = value;
+                _requireUpdate = true;
+            }
+        }
 
         /// <summary>
         /// Maximum width of the widget, it will try to wrap its content. 0 for no maximum width.

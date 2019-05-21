@@ -45,7 +45,7 @@ namespace WGP.AzurUI
         /// <summary>
         /// Hue of the theme.
         /// </summary>
-        public float Hue { get; set; }
+        public virtual float Hue { get; set; }
 
         /// <summary>
         /// The AABB of the widget without its position.

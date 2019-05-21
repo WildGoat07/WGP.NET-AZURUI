@@ -46,7 +46,7 @@ namespace WGP.AzurUI
         /// Hue is useless here, don't use it.
         /// </summary>
         [Browsable(false), Bindable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), EditorBrowsable(EditorBrowsableState.Never)]
-        public new float Hue { get => base.Hue; set => base.Hue = value; }
+        public override float Hue { get => base.Hue; set => base.Hue = value; }
 
         public override FloatRect LocalBounds => new FloatRect(0, 0, _display.GetGlobalBounds().Width, Engine.CharacterSize);
 
