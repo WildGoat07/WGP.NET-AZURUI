@@ -73,17 +73,6 @@ namespace WGP.AzurUI
 
         #region Public Methods
 
-        public override void DrawOn(RenderTarget target)
-        {
-            Transform tr = Transform.Identity;
-            tr.Translate(Position);
-            foreach (var item in _texts)
-                target.Draw(item, new RenderStates(tr));
-            target.Draw(_lines, new RenderStates(tr));
-            foreach (var item in _sprites)
-                target.Draw(item.Item1, new RenderStates(tr));
-        }
-
         public override string ToString() => _text;
 
         #endregion Public Methods

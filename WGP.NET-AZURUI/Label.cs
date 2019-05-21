@@ -61,12 +61,7 @@ namespace WGP.AzurUI
 
         public static implicit operator Label(string str) => new Label(str);
 
-        public override void DrawOn(RenderTarget target)
-        {
-            Transform tr = Transform.Identity;
-            tr.Translate(Position);
-            target.Draw(_display, new RenderStates(tr));
-        }
+        public sealed override void DrawOn(RenderTarget target) => DrawOn(target, new Vector2f());
 
         public override string ToString() => _display.DisplayedString;
 
