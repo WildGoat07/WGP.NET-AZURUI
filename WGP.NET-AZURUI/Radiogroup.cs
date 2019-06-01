@@ -259,9 +259,9 @@ namespace WGP.AzurUI
 
                     //light
                     float highBorder = Utilities.Max(1 + currPadPos - Engine.CharacterSize, 0);
-                    float lowBorder = Utilities.Min(11 + currPadPos + Engine.CharacterSize, Items.Count * Engine.CharacterSize);
+                    float lowBorder = Utilities.Min(11 + currPadPos + Engine.CharacterSize, LocalBounds.Height);
                     byte highAlpha = (byte)Utilities.Interpolation(Utilities.Percent(currPadPos, 0, Engine.CharacterSize), 255f, 0);
-                    byte lowAlpha = (byte)Utilities.Interpolation(Utilities.Percent((Items.Count - 1) * Engine.CharacterSize - currPadPos, 0, Engine.CharacterSize), 255f, 0);
+                    byte lowAlpha = (byte)Utilities.Interpolation(Utilities.Percent(Items[Items.Count - 1].Position.Y - currPadPos, 0, Engine.CharacterSize), 255f, 0);
                     _gradient.Append(new Vertex(new Vector2f(0, 1 + currPadPos), NewColor(Hue, .75f, .75f)));
                     _gradient.Append(new Vertex(new Vector2f(6, 1 + currPadPos), NewColor(Hue, .75f, .75f)));
                     _gradient.Append(new Vertex(new Vector2f(6, highBorder), NewColor(Hue, .75f, .75f, highAlpha)));
