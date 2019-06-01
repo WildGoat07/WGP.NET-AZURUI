@@ -15,6 +15,12 @@ namespace WGP.AzurUI
     /// </summary>
     public class Button : Widget
     {
+        #region Public Fields
+
+        public bool AutoSize;
+
+        #endregion Public Fields
+
         #region Protected Fields
 
         /// <summary>
@@ -42,6 +48,7 @@ namespace WGP.AzurUI
         /// </summary>
         public Button() : base()
         {
+            AutoSize = false;
             Text = new Label();
             _lines = new VertexArray(PrimitiveType.Lines);
             _gradient = new VertexArray(PrimitiveType.Quads);
@@ -147,6 +154,10 @@ namespace WGP.AzurUI
             {
                 Text.Position = -(Vector2f)(Vector2i)(Text.GlobalBounds.Size() / 2);
                 Text.Update(app, Position);
+            }
+            if (AutoSize)
+            {
+                HalfSize = (Vector2f)(Vector2i)(Text.GlobalBounds.Size() / 2) + new Vector2f(5, 5);
             }
             _gradient.Clear();
             if (Pressing)
