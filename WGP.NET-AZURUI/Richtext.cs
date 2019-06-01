@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
@@ -8,36 +9,41 @@ using System.Text;
 using System.Threading.Tasks;
 using SFML.Graphics;
 using SFML.System;
+using SFML.Window;
+using WGP;
 
 namespace WGP.AzurUI
 {
     /// <summary>
-    /// An advanced label with formatting.
+    /// An advanced label with formatting. It is NOT recommended for often changes, especially when
+    /// adding an image (and even more if this image is on the web), as it will load it every time.
     /// </summary>
     public class Richtext : Label
     {
-        #region Public Fields
-
-        /// <summary>
-        /// Actions triggered when clicking an [action="ID"] where ID is the key.
-        /// </summary>
-        public ReadOnlyDictionary<string, Action> Actions;
-
-        #endregion Public Fields
-
         #region Internal Fields
 
         internal static int ACTION = 256;
+
         internal static int BOLD = 1;
+
         internal static int HEADLINE1 = 16;
+
         internal static int HEADLINE2 = 32;
+
         internal static int HEADLINE3 = 64;
+
         internal static int ITALIC = 2;
+
         internal static int LIST = 512;
+
         internal static int LIST_ELEMENT = 1024;
+
         internal static int NONE = 0;
+
         internal static int STRIKETHROUGH = 8;
+
         internal static int UNDERLINED = 4;
+
         internal static int URI = 128;
 
         #endregion Internal Fields
@@ -45,12 +51,19 @@ namespace WGP.AzurUI
         #region Private Fields
 
         private Dictionary<string, Action> _actions;
+
         private List<Component> _components;
+
         private Vector2f _globalOffset;
+
         private List<Tuple<FloatRect, Trigger>> _hitboxes;
+
         private VertexArray _lines;
+
         private float _maxWidth;
+
         private bool _requireUpdate;
+
         private List<Tuple<Sprite, int>> _sprites;
 
         private string _text;
@@ -58,6 +71,10 @@ namespace WGP.AzurUI
         private List<Text> _texts;
 
         private List<Tuple<List<Texture>, Time>> _textures;
+
+        private FloatRect AABB;
+
+        private bool oldMouseState;
 
         #endregion Private Fields
 
@@ -69,12 +86,14 @@ namespace WGP.AzurUI
         /// <param name="text">Markdown formatted text.</param>
         public Richtext(string text = "") : base(text)
         {
+            oldMouseState = false;
             _texts = new List<Text>();
             _lines = new VertexArray(PrimitiveType.Lines);
             _sprites = new List<Tuple<Sprite, int>>();
             _textures = new List<Tuple<List<Texture>, Time>>();
             _hitboxes = new List<Tuple<FloatRect, Trigger>>();
             _components = new List<Component>();
+            _actions = new Dictionary<string, Action>();
             Text = text;
         }
 
@@ -100,6 +119,8 @@ namespace WGP.AzurUI
             }
         }
 
+        public override FloatRect LocalBounds => AABB;
+
         /// <summary>
         /// Maximum width of the widget, it will try to wrap its content. 0 for no maximum width.
         /// </summary>
@@ -112,14 +133,16 @@ namespace WGP.AzurUI
         /// underlined, [strike]...[/] for strikethrough, [h1]...[/] for biggest titles, [h3]...[/]
         /// for smallest titles, [uri="some URI (can be relative)"]...[/] for a clickable link to an
         /// uri, [action="ID"]...[/] for a clickable link to an action, [img="URI to img (can be
-        /// relative)"/] for an image (support animated gifs), [ul][li]...[/][/] for unorganised
-        /// lists, [ol][li]...[/][/], [line/] for an horizontal line. Use '\[' to escape the '[' character.
+        /// relative)"/] for an image (support animated gifs, but insanely slow to load it, thanks to
+        /// sfml, so i have to copy the bitmaps 2 times), [line/] for an horizontal line. Use '\[' to
+        /// escape the '[' character.
         public override string Text
         {
             set
             {
                 var index = new int();
                 _textures.Clear();
+                _actions.Clear();
                 Parse(value, ref index, new Part() { Modifier = NONE, ListIndex = -1 });
                 _requireUpdate = true;
             }
@@ -130,11 +153,43 @@ namespace WGP.AzurUI
 
         #region Public Methods
 
+        /// <summary>
+        /// Sets the action linked to its key called by clicking on the [action] component.
+        /// </summary>
+        /// <param name="key">Name of the action.</param>
+        /// <param name="action">Action called.</param>
+        public void SetAction(string key, Action action)
+        {
+            if (_actions.ContainsKey(key))
+                _actions[key] = action;
+            else
+                throw new KeyNotFoundException("No action named \"" + key + "\" found.");
+        }
+
         public override string ToString() => _text;
 
         #endregion Public Methods
 
         #region Internal Methods
+
+        internal string[] AlternateSplit(string str, int tabSpace = 4)
+        {
+            str = str.Replace("\t", new string(' ', tabSpace));
+            var result = new List<string>();
+            var curr = "";
+            foreach (var character in str)
+            {
+                curr += character;
+                if (character == ' ')
+                {
+                    result.Add(curr);
+                    curr = "";
+                }
+            }
+            if (curr.Length > 0)
+                result.Add(curr);
+            return result.ToArray();
+        }
 
         internal override void DrawOn(RenderTarget target, Vector2f offset)
         {
@@ -158,6 +213,7 @@ namespace WGP.AzurUI
             {
                 try
                 {
+                    //If the path is a relative file:///
                     uri = new Uri(Path.Combine(Environment.CurrentDirectory, str));
                 }
                 catch (Exception)
@@ -178,17 +234,190 @@ namespace WGP.AzurUI
                 _hitboxes.Clear();
                 _lines.Clear();
                 _sprites.Clear();
+                Vector2f currentOffset = new Vector2f();
+                var currRects = new List<Tuple<FloatRect, int>>();
+                var compoHeight = new List<Tuple<int, float>>();
+                var hitboxesToManage = new List<Tuple<FloatRect, int, Trigger>>();
+                foreach (var item in _components)
+                {
+                    var addedThisLoop = new List<Tuple<FloatRect, int>>();
+                    if (item.Text.Length > 0)
+                    {
+                        var texts = AlternateSplit(item.Text);
+                        foreach (var t in texts)
+                        {
+                            StringBuilder currentWord = new StringBuilder();
+                            for (int i = 0; i < t.Length; i++)
+                            {
+                                if (t[i] == '\n')
+                                {
+                                    var text = new Text(currentWord.ToString(), Engine.BaseFont, item.CharSize);
+                                    if (item.IsDefaultColor)
+                                        text.FillColor = Engine.BaseFontColor;
+                                    else
+                                        text.FillColor = NewColor(Hue, .8f, 1, Engine.BaseFontColor.A);
+                                    text.Style = item.Style;
+                                    if (currentOffset.X + text.GetGlobalBounds().Width > MaxWidth && MaxWidth > 0 && currentOffset.X > 0 && currentWord.Length > 0)
+                                    {
+                                        currentOffset.X = 0;
+                                        currentOffset.Y += 1;
+                                    }
+                                    text.Position = currentOffset;
+                                    currRects.Add(new Tuple<FloatRect, int>(text.GetGlobalBounds(), (int)currentOffset.Y));
+                                    addedThisLoop.Add(new Tuple<FloatRect, int>(text.GetGlobalBounds(), (int)currentOffset.Y));
+                                    compoHeight.Add(new Tuple<int, float>((int)currentOffset.Y, item.CharSize));
+                                    currentOffset.X = 0;
+                                    currentOffset.Y += 1;
+                                    currentWord.Clear();
+                                    _texts.Add(text);
+                                }
+                                else
+                                    currentWord.Append(t[i]);
+                                if (i != '\n' && i == t.Length - 1)
+                                {
+                                    var text = new Text(currentWord.ToString(), Engine.BaseFont, item.CharSize);
+                                    if (item.IsDefaultColor)
+                                        text.FillColor = Engine.BaseFontColor;
+                                    else
+                                        text.FillColor = NewColor(Hue, .8f, 1, Engine.BaseFontColor.A);
+                                    text.Style = item.Style;
+                                    if (currentOffset.X + text.GetGlobalBounds().Width > MaxWidth && MaxWidth > 0 && currentOffset.X > 0)
+                                    {
+                                        currentOffset.X = 0;
+                                        currentOffset.Y += 1;
+                                    }
+                                    text.Position = currentOffset;
+                                    currRects.Add(new Tuple<FloatRect, int>(text.GetGlobalBounds(), (int)currentOffset.Y));
+                                    addedThisLoop.Add(new Tuple<FloatRect, int>(text.GetGlobalBounds(), (int)currentOffset.Y));
+                                    compoHeight.Add(new Tuple<int, float>((int)currentOffset.Y, item.CharSize));
+                                    currentOffset.X += text.GetGlobalBounds().Width;
+                                    _texts.Add(text);
+                                }
+                            }
+                        }
+                    }
+                    if (item.IsImage)
+                    {
+                        if (currentOffset.X + _textures[item.Image].Item1[0].Size.X > MaxWidth && MaxWidth > 0 && currentOffset.X > 0)
+                        {
+                            currentOffset.X = 0;
+                            currentOffset.Y += 1;
+                        }
+                        var sprite = new Sprite(_textures[item.Image].Item1[0]);
+                        sprite.Position = currentOffset;
+                        currRects.Add(new Tuple<FloatRect, int>(sprite.GetGlobalBounds(), (int)currentOffset.Y));
+                        compoHeight.Add(new Tuple<int, float>((int)currentOffset.Y, sprite.Texture.Size.Y));
+                        addedThisLoop.Add(new Tuple<FloatRect, int>(sprite.GetGlobalBounds(), (int)currentOffset.Y));
+                        currentOffset.X += sprite.Texture.Size.X;
+                        _sprites.Add(new Tuple<Sprite, int>(sprite, item.Image));
+                    }
+                    if (item.IsLine)
+                    {
+                        if (currentOffset.X > 0)
+                        {
+                            currentOffset.X = 0;
+                            currentOffset.Y += 1;
+                        }
+                        _lines.Append(new Vertex(currentOffset));
+                        _lines.Append(new Vertex(currentOffset));
+                        compoHeight.Add(new Tuple<int, float>((int)currentOffset.Y, Engine.CharacterSize));
+                        currentOffset.X += MaxWidth;
+                    }
+                    if (item.Action != null && item.Action.Length > 0)
+                    {
+                        foreach (var box in addedThisLoop)
+                        {
+                            var trigger = new Trigger();
+                            trigger.Action = item.Action;
+                            trigger.Type = Trigger.Mode.ACTION;
+                            hitboxesToManage.Add(new Tuple<FloatRect, int, Trigger>(box.Item1, box.Item2, trigger));
+                        }
+                    }
+                    if (item.Link != null && item.Link.OriginalString.Length > 0)
+                    {
+                        foreach (var box in addedThisLoop)
+                        {
+                            var trigger = new Trigger();
+                            trigger.Uri = item.Link;
+                            trigger.Type = Trigger.Mode.URI;
+                            hitboxesToManage.Add(new Tuple<FloatRect, int, Trigger>(box.Item1, box.Item2, trigger));
+                        }
+                    }
+                }
+                var linesHeight = new List<float>();
+                for (int i = 0; i <= currentOffset.Y; i++)
+                    linesHeight.Add(0);
+                foreach (var height in compoHeight)
+                    linesHeight[height.Item1] = Utilities.Max(linesHeight[height.Item1], height.Item2);
+                for (int i = 1; i < linesHeight.Count; i++)
+                    linesHeight[i] += linesHeight[i - 1];
+                linesHeight.Insert(0, 0);
+                {
+                    var pts = new List<Vector2f>();
+                    foreach (var box in currRects)
+                    {
+                        pts.Add(new Vector2f(box.Item1.Right(), linesHeight[box.Item2 + 1]));
+                        pts.Add(new Vector2f(box.Item1.Left, linesHeight[box.Item2]));
+                    }
+                    AABB = Utilities.CreateRect(pts);
+                }
+                foreach (var sprite in _sprites)
+                    sprite.Item1.Position = new Vector2f(sprite.Item1.Position.X, linesHeight[(int)sprite.Item1.Position.Y]);
+                foreach (var text in _texts)
+                    text.Position = new Vector2f(text.Position.X, linesHeight[(int)text.Position.Y]);
+                for (uint i = 0; i < _lines.VertexCount; i += 2)
+                {
+                    Vector2f pos = _lines[i].Position;
+                    pos.Y = (linesHeight[(int)pos.Y] + linesHeight[(int)pos.Y + 1]) / 2;
+                    _lines[i] = new Vertex(pos, Engine.BaseFontColor);
+                    pos.X = AABB.Width;
+                    _lines[i + 1] = new Vertex(pos, Engine.BaseFontColor);
+                }
+                foreach (var box in hitboxesToManage)
+                {
+                    var rect = box.Item1;
+                    rect.Top = linesHeight[box.Item2];
+                    _hitboxes.Add(new Tuple<FloatRect, Trigger>(rect, box.Item3));
+                }
             }
             var texList = new List<Texture>();
             foreach (var item in _textures)
             {
-                int selectedIndex = (int)(_chronometer.ElapsedTime.AsSeconds() / item.Item2.AsSeconds());
+                //for animated gifs
+                int selectedIndex = (int)(Math.Round(_chronometer.ElapsedTime.AsSeconds() / item.Item2.AsSeconds()));
                 texList.Add(item.Item1[selectedIndex % item.Item1.Count]);
             }
             foreach (var item in _sprites)
             {
                 item.Item1.Texture = texList[item.Item2];
             }
+            var relativeMousePos = app.MapPixelToCoords(Mouse.GetPosition(app)) - Position - offset;
+            if (!oldMouseState && Mouse.IsButtonPressed(Mouse.Button.Left))
+            {
+                foreach (var box in _hitboxes)
+                {
+                    if (box.Item1.Contains(relativeMousePos))
+                    {
+                        switch (box.Item2.Type)
+                        {
+                            case Trigger.Mode.ACTION:
+                                if (box.Item2.Action != null && box.Item2.Action.Length > 0)
+                                {
+                                    Action action;
+                                    _actions.TryGetValue(box.Item2.Action, out action);
+                                    action?.Invoke();
+                                }
+                                break;
+
+                            case Trigger.Mode.URI:
+                                if (box.Item2.Uri != null)
+                                    Process.Start(box.Item2.Uri.ToString());
+                                break;
+                        }
+                    }
+                }
+            }
+            oldMouseState = Mouse.IsButtonPressed(Mouse.Button.Left);
         }
 
         #endregion Internal Methods
@@ -200,12 +429,10 @@ namespace WGP.AzurUI
             if (str.Length == 0)
                 return;
             var result = new Component();
-            result.text = str;
+            result.Text = str;
             result.IsDefaultColor = true;
             result.IsImage = false;
             result.IsLine = false;
-            result.BeginList = false;
-            result.ListIndex = part.ListIndex;
             result.CharSize = Engine.CharacterSize;
             if ((part.Modifier & BOLD) != 0)
                 result.Style |= SFML.Graphics.Text.Styles.Bold;
@@ -226,24 +453,13 @@ namespace WGP.AzurUI
                 result.CharSize = (uint)(Engine.CharacterSize * 1.5f);
             if ((part.Modifier & ACTION) != 0)
             {
-                result.IsDefaultColor = false; /*NewColor(Hue, .8f, 1, Engine.BaseFontColor.A);
-                _hitboxes.Add(new Tuple<FloatRect, Trigger>(new FloatRect(offset - new Vector2f(0, result.CharacterSize),
-                    new Vector2f(result.GetGlobalBounds().Width, result.CharacterSize)), new Trigger() { Type = Trigger.Mode.ACTION, Action = part.Action }));*/
+                result.IsDefaultColor = false;
+                result.Action = part.Action;
             }
             if ((part.Modifier & URI) != 0)
             {
-                result.IsDefaultColor = false; /*NewColor(Hue, .8f, 1, Engine.BaseFontColor.A);
-                _hitboxes.Add(new Tuple<FloatRect, Trigger>(new FloatRect(offset - new Vector2f(0, result.CharacterSize),
-                    new Vector2f(result.GetGlobalBounds().Width, result.CharacterSize)), new Trigger() { Type = Trigger.Mode.URI, Uri = part.linkURI }));*/
-            }
-            if ((part.Modifier & LIST) != 0 && (part.Modifier & LIST_ELEMENT) == 0)
-            {
-                result.text = "";
-                result.BeginList = true;
-            }
-            if ((part.Modifier & LIST_ELEMENT) != 0)
-            {
-                result.text = "•  " + result.text;
+                result.IsDefaultColor = false;
+                result.Link = part.linkURI;
             }
             _components.Add(result);
         }
@@ -254,9 +470,15 @@ namespace WGP.AzurUI
             while (index < str.Length)
             {
                 char currChar = str[index];
+                if (currChar == '\r') //why on earth is this old character still used ??
+                {
+                    index++;
+                    continue;
+                }
                 if (currChar == '\\' && index + 1 <= str.Length)
                 {
-                    currentText += str[index + 1];
+                    currChar = str[index + 1];
+                    currentText += currChar;
                     index += 2;
                     continue;
                 }
@@ -268,14 +490,16 @@ namespace WGP.AzurUI
                     {
                         if (str.Substring(index, 3) == "[/]")
                         {
-                            GenerateSubComponentText(currentText, currentPart);
+                            if (currentText.Length > 0)
+                                GenerateSubComponentText(currentText, currentPart);
                             currentText = "";
                             index += 2;
                             return;
                         }
                         else if (str.Substring(index, 3) == "[b]")
                         {
-                            GenerateSubComponentText(currentText, currentPart);
+                            if (currentText.Length > 0)
+                                GenerateSubComponentText(currentText, currentPart);
                             currentText = "";
                             var pushed = currentPart;
                             pushed.Modifier |= BOLD;
@@ -284,7 +508,8 @@ namespace WGP.AzurUI
                         }
                         else if (str.Substring(index, 3) == "[u]")
                         {
-                            GenerateSubComponentText(currentText, currentPart);
+                            if (currentText.Length > 0)
+                                GenerateSubComponentText(currentText, currentPart);
                             currentText = "";
                             var pushed = currentPart;
                             pushed.Modifier |= UNDERLINED;
@@ -293,7 +518,8 @@ namespace WGP.AzurUI
                         }
                         else if (str.Substring(index, 3) == "[i]")
                         {
-                            GenerateSubComponentText(currentText, currentPart);
+                            if (currentText.Length > 0)
+                                GenerateSubComponentText(currentText, currentPart);
                             currentText = "";
                             var pushed = currentPart;
                             pushed.Modifier |= ITALIC;
@@ -302,7 +528,8 @@ namespace WGP.AzurUI
                         }
                         else if (str.Substring(index, 4) == "[h1]")
                         {
-                            GenerateSubComponentText(currentText, currentPart);
+                            if (currentText.Length > 0)
+                                GenerateSubComponentText(currentText, currentPart);
                             currentText = "";
                             var pushed = currentPart;
                             pushed.Modifier |= HEADLINE1;
@@ -313,7 +540,8 @@ namespace WGP.AzurUI
                         }
                         else if (str.Substring(index, 4) == "[h2]")
                         {
-                            GenerateSubComponentText(currentText, currentPart);
+                            if (currentText.Length > 0)
+                                GenerateSubComponentText(currentText, currentPart);
                             currentText = "";
                             var pushed = currentPart;
                             pushed.Modifier |= HEADLINE2;
@@ -322,7 +550,8 @@ namespace WGP.AzurUI
                         }
                         else if (str.Substring(index, 4) == "[h3]")
                         {
-                            GenerateSubComponentText(currentText, currentPart);
+                            if (currentText.Length > 0)
+                                GenerateSubComponentText(currentText, currentPart);
                             currentText = "";
                             var pushed = currentPart;
                             pushed.Modifier |= HEADLINE3;
@@ -331,7 +560,8 @@ namespace WGP.AzurUI
                         }
                         else if (str.Substring(index, 8) == "[strike]")
                         {
-                            GenerateSubComponentText(currentText, currentPart);
+                            if (currentText.Length > 0)
+                                GenerateSubComponentText(currentText, currentPart);
                             currentText = "";
                             var pushed = currentPart;
                             pushed.Modifier |= STRIKETHROUGH;
@@ -340,7 +570,8 @@ namespace WGP.AzurUI
                         }
                         else if (str.Substring(index, 6) == "[uri=\"")
                         {
-                            GenerateSubComponentText(currentText, currentPart);
+                            if (currentText.Length > 0)
+                                GenerateSubComponentText(currentText, currentPart);
                             currentText = "";
                             var pushed = currentPart;
                             pushed.Modifier |= URI;
@@ -354,7 +585,8 @@ namespace WGP.AzurUI
                         }
                         else if (str.Substring(index, 9) == "[action=\"")
                         {
-                            GenerateSubComponentText(currentText, currentPart);
+                            if (currentText.Length > 0)
+                                GenerateSubComponentText(currentText, currentPart);
                             currentText = "";
                             var pushed = currentPart;
                             pushed.Modifier |= ACTION;
@@ -365,48 +597,34 @@ namespace WGP.AzurUI
                             pushed.Action = action;
                             index += 2;
                             Parse(str, ref index, pushed);
-                        }
-                        else if (str.Substring(index, 4) == "[ol]")
-                        {
-                            GenerateSubComponentText(currentText, currentPart);
-                            currentText = "";
-                            var pushed = currentPart;
-                            pushed.ListIndex = 1;
-                            pushed.Modifier |= LIST;
-                            index += 4;
-                            Parse(str, ref index, pushed);
-                        }
-                        else if (str.Substring(index, 4) == "[ul]")
-                        {
-                            GenerateSubComponentText(currentText, currentPart);
-                            currentText = "";
-                            var pushed = currentPart;
-                            pushed.ListIndex = 0;
-                            pushed.Modifier |= LIST;
-                            index += 4;
-                            Parse(str, ref index, pushed);
+                            _actions.Add(action, null);
                         }
                         else if (str.Substring(index, 7) == "[line/]")
                         {
-                            GenerateSubComponentText(currentText, currentPart);
+                            if (currentText.Length > 0)
+                                GenerateSubComponentText(currentText, currentPart);
                             currentText = "";
-                            _components.Add(new Component() { IsLine = true });
+                            _components.Add(new Component() { IsLine = true, Text = "" });
                             index += 7;
                         }
                         else if (str.Substring(index, 6) == "[img=\"")
                         {
-                            GenerateSubComponentText(currentText, currentPart);
+                            if (currentText.Length > 0)
+                                GenerateSubComponentText(currentText, currentPart);
                             currentText = "";
                             index += 6;
                             string uriString = "";
                             while (str[index] != '"')
                                 uriString += str[index++];
-                            index += 3;
+                            index += 2;
                             var uri = GetUri(uriString);
                             Vector2u size;
                             var compo = new Component();
+                            compo.Action = currentPart.Action;
+                            compo.Link = currentPart.linkURI;
                             compo.IsImage = true;
                             compo.Image = _textures.Count;
+                            compo.Text = "";
                             _components.Add(compo);
                             if (uri == null)
                             {
@@ -465,7 +683,7 @@ namespace WGP.AzurUI
                     {
                         throw new InvalidOperationException("Invalid or corrupted format.");
                     }
-                    catch (InvalidOperationException e)
+                    catch (Exception e)
                     {
                         throw e;
                     }
@@ -527,15 +745,15 @@ namespace WGP.AzurUI
         {
             #region Public Fields
 
-            public bool BeginList;
+            public string Action;
             public uint CharSize;
             public int Image;
             public bool IsDefaultColor;
             public bool IsImage;
             public bool IsLine;
-            public int ListIndex;
+            public Uri Link;
             public Text.Styles Style;
-            public string text;
+            public string Text;
 
             #endregion Public Fields
         }
