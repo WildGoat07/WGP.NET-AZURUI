@@ -48,7 +48,14 @@ namespace WGP.AzurUI
         [Browsable(false), Bindable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), EditorBrowsable(EditorBrowsableState.Never)]
         public override float Hue { get => base.Hue; set => base.Hue = value; }
 
-        public override FloatRect LocalBounds => new FloatRect(0, 0, _display.GetGlobalBounds().Width, Engine.CharacterSize);
+        public override FloatRect LocalBounds
+        {
+            get
+            {
+                var nbLines = Text.Count((c) => c == '\n');
+                return new FloatRect(0, 0, _display.GetGlobalBounds().Width, nbLines * Engine.BaseFont.GetLineSpacing(Engine.CharacterSize) + Engine.CharacterSize);
+            }
+        }
 
         /// <summary>
         /// Displayed Text.
