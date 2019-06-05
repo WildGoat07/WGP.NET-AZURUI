@@ -95,7 +95,14 @@ namespace WGP.AzurUI
         /// <param name="value">Value of the color.</param>
         /// <param name="alpha">Transparency of the color.</param>
         /// <returns>Created color.</returns>
-        protected HSVColor NewColor(float hue, float saturation, float value, byte alpha = 255) => new HSVColor(hue, Enabled ? saturation : 0, Enabled ? value : value * .7f, alpha);
+        protected HSVColor NewColor(float hue, float saturation, float value, byte alpha = 255) =>
+            new HSVColor(hue,
+                Enabled ? saturation : 0,
+                Enabled ?
+                    /*Engine.Mode == Engine.Theme.DARK ? */value : /*1 - value
+                :
+                    Engine.Mode == Engine.Theme.DARK ? */value * .7f /*: 1 - value * .7f*/,
+                alpha);
 
         #endregion Protected Methods
     }

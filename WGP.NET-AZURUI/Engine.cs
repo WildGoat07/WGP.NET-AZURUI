@@ -15,6 +15,15 @@ namespace WGP.AzurUI
     /// </summary>
     public static class Engine
     {
+        #region Public Fields
+
+        /// <summary>
+        /// The default recommended background color.
+        /// </summary>
+        public static Color DefaultBackgroundColor;
+
+        #endregion Public Fields
+
         #region Internal Fields
 
         internal static Font BaseFont;
@@ -22,6 +31,8 @@ namespace WGP.AzurUI
         internal static uint CharacterSize;
         internal static Chronometer Chronometer;
         internal static WebClient Client;
+
+        internal static Theme Mode;
 
         #endregion Internal Fields
 
@@ -43,14 +54,25 @@ namespace WGP.AzurUI
             VERTICAL
         }
 
+        /// <summary>
+        /// The default theme of the GUI
+        /// </summary>
+        public enum Theme
+        {
+            /// <summary>
+            /// Normal, classic, trivial
+            /// </summary>
+            AZUR,
+
+            /// <summary>
+            /// For the degenerates
+            /// </summary>
+            WHITE
+        }
+
         #endregion Public Enums
 
         #region Public Properties
-
-        /// <summary>
-        /// The default recommended background color.
-        /// </summary>
-        public static Color DefaultBackgroundColor => new HSVColor(DefaultHue, .26f, .37f);
 
         /// <summary>
         /// The default hue of newly created widgets.
@@ -64,12 +86,23 @@ namespace WGP.AzurUI
         /// <summary>
         /// Initialize the engine. Must be called before creating any widget to not cause troubles.
         /// </summary>
-        public static void Initialize()
+        public static void Initialize(Theme theme = Theme.AZUR)
         {
+            Mode = theme;
             Client = new WebClient();
             BaseFont = new Font(Properties.Resources.tahoma);
             CharacterSize = 12;
-            BaseFontColor = new Color(230, 230, 230);
+            if (theme == Theme.AZUR)
+            {
+                BaseFontColor = new Color(230, 230, 230);
+                DefaultBackgroundColor = new HSVColor(DefaultHue, .26f, .37f);
+            }
+            else
+            {
+                DefaultBackgroundColor = new HSVColor(DefaultHue, 0, .9f);
+                BaseFontColor = new Color(15, 15, 15);
+            }
+
             Chronometer = new Chronometer();
         }
 
